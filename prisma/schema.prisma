@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("admin")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admins")
+}
+
+model Property {
+  id          String   @id @default(cuid())
+  title       String
+  type        String   // "Satılık" | "Kiralık"
+  category    String
+  price       String
+  location    String
+  area        Int
+  rooms       Int
+  bathrooms   Int
+  description String?
+  featured    Boolean  @default(false)
+  views       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  photos PropertyPhoto[]
+
+  @@map("properties")
+}
+
+model PropertyPhoto {
+  id         String @id @default(cuid())
+  propertyId String
+  url        String
+  order      Int    @default(0)
+  isMain     Boolean @default(false)
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@map("property_photos")
+}
+
+model AdminInvitation {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  token     String   @unique
+  role      String   @default("admin")
+  expiresAt DateTime
+  isUsed    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("admin_invitations")
+}
