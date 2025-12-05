@@ -33,9 +33,21 @@ model Property {
   category    String
   price       String
   location    String
-  area        Int
-  rooms       Int
+  area        Int      // m2 (Brüt)
+  areaNet     Int?     // m2 (Net)
+  rooms       String   // "2+1" etc.
   bathrooms   Int
+  buildingAge String?  // "0", "1-5", "6-10 arası" etc.
+  floorNumber Int?     // Bulunduğu Kat
+  totalFloors Int?     // Kat Sayısı
+  heating     String?  // "Kombi (Doğalgaz)", "Merkezi", "Klima" etc.
+  balcony     Boolean? @default(false)
+  elevator    Boolean? @default(false)
+  furnished   Boolean? @default(false) // Eşyalı
+  inComplex   Boolean? @default(false) // Site İçerisinde
+  kitchen     String?  // "Açık (Amerikan)", "Kapalı"
+  parking     String?  // "Açık Otopark", "Kapalı Otopark", "Yok"
+  usageStatus String?  // "Boş", "Kiracılı", "Mülk Sahibi"
   description String?
   featured    Boolean  @default(false)
   views       Int      @default(0)
@@ -49,15 +61,35 @@ model Property {
 }
 
 model PropertyPhoto {
-  id         String @id @default(cuid())
+  id         String   @id @default(cuid())
   propertyId String
   url        String
-  order      Int    @default(0)
-  isMain     Boolean @default(false)
+  isMain     Boolean  @default(false)
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   @@map("property_photos")
+}
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  phone     String?
+  createdAt DateTime @default(now())
+
+  @@map("subscribers")
+}
+
+model SystemSettings {
+  id              String   @id @default(cuid())
+  maintenanceMode Boolean  @default(false)
+  updatedAt       DateTime @updatedAt
+
+  @@map("system_settings")
 }
 
 model AdminInvitation {
@@ -71,3 +103,31 @@ model AdminInvitation {
 
   @@map("admin_invitations")
 }
+
+
+
+model ChatSession {
+  id          String    @id @default(cuid())
+  userName    String
+  userEmail   String?
+  userPhone   String?
+  status      String    @default("bot") // bot, live_waiting, live_active, closed
+  isRead      Boolean   @default(false) // Admin okudu mu?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  messages    Message[]
+
+  @@map("chat_sessions")
+}
+
+model Message {
+  id        String      @id @default(cuid())
+  content   String
+  sender    String      // user, bot, admin
+  senderName String?    // Mesajı gönderenin görünen ismi
+  sessionId String
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
+
+  @@map("messages")
+}

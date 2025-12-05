@@ -71,3 +71,58 @@ export function generateAdminInvitationEmail(invitationUrl: string): string {
     </html>
   `
 }
+
+export function generateNewPropertyEmail(userName: string, propertyTitle: string, propertyId: string, propertyPrice: string, propertyLocation: string): string {
+  const propertyUrl = `${process.env.SITE_URL || 'http://localhost:3000'}/properties/${propertyId}`;
+  
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <title>Yeni İlan: ${propertyTitle}</title>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #D4AF37, #B8860B); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
+        .button { display: inline-block; background: #D4AF37; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px 0; }
+        .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+        .property-details { background: white; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid #D4AF37; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Kenan Kadıoğlu Gayrimenkul</h1>
+          <p>Yeni Fırsat Alarmı</p>
+        </div>
+        <div class="content">
+          <h2>Merhaba ${userName},</h2>
+          <p>İlginizi çekebilecek yeni bir portföyümüz var.</p>
+          
+          <div class="property-details">
+            <h3 style="margin-top: 0; color: #B8860B;">${propertyTitle}</h3>
+            <p><strong>Konum:</strong> ${propertyLocation}</p>
+            <p><strong>Fiyat:</strong> ${propertyPrice}</p>
+          </div>
+
+          <p>Detaylı bilgi ve fotoğraflar için ilanı inceleyebilirsiniz:</p>
+          
+          <div style="text-align: center;">
+            <a href="${propertyUrl}" class="button">İlanı İncele</a>
+          </div>
+          
+          <p>Saygılarımızla,</p>
+          <p>Kenan Kadıoğlu Gayrimenkul Ekibi</p>
+        </div>
+        <div class="footer">
+          <p>Kenan Kadıoğlu Gayrimenkul Danışmanlığı</p>
+          <p>Trabzon, Türkiye</p>
+          <p><small>Bu e-postayı yeni ilanlardan haberdar olmak için abone olduğunuz için alıyorsunuz.</small></p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `
+}

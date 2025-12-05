@@ -3,7 +3,9 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Phone, Mail, MapPin, Home, Building, User, MessageCircle, Settings } from 'lucide-react'
+import { Menu, X, Phone, Mail, MapPin, Home, Building, User, MessageCircle, Bell } from 'lucide-react'
+import Logo from '@/components/Logo'
+import SubscriptionModal from './SubscriptionModal'
 
 const navigation = [
   { name: 'Ana Sayfa', href: '/', icon: Home },
@@ -15,6 +17,7 @@ const navigation = [
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -85,8 +88,8 @@ export default function Header() {
       <motion.header 
         className={`sticky top-0 z-50 transition-all duration-300 ${
           scrolled 
-            ? 'bg-white/95 backdrop-blur-md shadow-xl border-b border-primary-gold/20' 
-            : 'bg-white shadow-lg'
+            ? 'bg-black/95 backdrop-blur-md shadow-xl border-b border-primary-gold/20' 
+            : 'bg-black shadow-lg border-b border-white/5'
         }`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
@@ -96,32 +99,11 @@ export default function Header() {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-4 group">
-              <motion.div 
-                className="relative bg-gradient-to-br from-primary-gold to-primary-gold-dark p-3 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300"
-                whileHover={{ scale: 1.05, rotate: 5 }}
-                transition={{ type: 'spring', stiffness: 300 }}
-              >
-                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-inner">
-                  <span className="bg-gradient-to-r from-primary-gold to-primary-gold-dark bg-clip-text text-transparent font-bold text-xl">
-                    KK
-                  </span>
-                </div>
-                <div className="absolute inset-0 rounded-xl animate-shimmer opacity-30"></div>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <h1 className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-charcoal to-charcoal-light bg-clip-text text-transparent">
-                  Kenan Kadıoğlu
-                </h1>
-                <p className="text-sm text-accent-silver font-medium">Gayrimenkul Danışmanlığı</p>
-              </motion.div>
+              <Logo />
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-8">
+            <nav className="hidden md:flex items-center space-x-8">
               {navigation.map((item, index) => (
                 <motion.div
                   key={item.name}
@@ -131,7 +113,7 @@ export default function Header() {
                 >
                   <Link
                     href={item.href}
-                    className="text-charcoal hover:text-primary-gold font-medium transition-all duration-300 relative group py-2"
+                    className="text-white hover:text-primary-gold font-medium transition-all duration-300 relative group py-2"
                   >
                     {item.name}
                     <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary-gold to-primary-gold-dark transition-all duration-300 group-hover:w-full"></span>
@@ -144,23 +126,23 @@ export default function Header() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
               >
-                <Link
-                  href="/admin"
-                  className="group relative bg-gradient-to-r from-primary-gold to-primary-gold-dark text-white px-6 py-3 rounded-xl font-medium hover:from-primary-gold-dark hover:to-primary-gold transition-all duration-300 shadow-lg hover:shadow-2xl overflow-hidden"
+                <button
+                  onClick={() => setIsSubscribeModalOpen(true)}
+                  className="group relative bg-gradient-to-r from-primary-gold to-primary-gold-dark text-white px-6 py-3 rounded-xl font-medium hover:from-primary-gold-dark hover:to-primary-gold transition-all duration-300 shadow-lg hover:shadow-2xl overflow-hidden flex items-center"
                 >
                   <span className="relative z-10 flex items-center space-x-2">
-                    <Settings className="w-4 h-4" />
-                    <span>Admin Paneli</span>
+                    <Bell className="w-4 h-4" />
+                    <span>Abone Ol</span>
                   </span>
                   <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-                </Link>
+                </button>
               </motion.div>
             </nav>
 
             {/* Mobile menu button */}
             <motion.button
               type="button"
-              className="lg:hidden p-3 text-charcoal hover:text-primary-gold transition-all duration-300 rounded-lg hover:bg-primary-gold/10"
+              className="lg:hidden p-3 text-white hover:text-primary-gold transition-all duration-300 rounded-lg hover:bg-primary-gold/10"
               onClick={() => setMobileMenuOpen(true)}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
@@ -170,6 +152,11 @@ export default function Header() {
           </div>
         </div>
       </motion.header>
+
+      <SubscriptionModal 
+        isOpen={isSubscribeModalOpen} 
+        onClose={() => setIsSubscribeModalOpen(false)} 
+      />
 
       {/* Mobile Navigation Drawer */}
       <AnimatePresence>
@@ -245,14 +232,16 @@ export default function Header() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
                   >
-                    <Link
-                      href="/admin"
-                      onClick={() => setMobileMenuOpen(false)}
+                    <button
+                      onClick={() => {
+                        setIsSubscribeModalOpen(true)
+                        setMobileMenuOpen(false)
+                      }}
                       className="flex items-center justify-center space-x-2 w-full bg-gradient-to-r from-primary-gold to-primary-gold-dark text-white p-4 rounded-xl font-medium hover:from-primary-gold-dark hover:to-primary-gold transition-all duration-300 shadow-lg"
                     >
-                      <Settings className="w-5 h-5" />
-                      <span>Admin Paneli</span>
-                    </Link>
+                      <Bell className="w-5 h-5" />
+                      <span>Abone Ol</span>
+                    </button>
                   </motion.div>
                   
                   {/* Contact Info */}

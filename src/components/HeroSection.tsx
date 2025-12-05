@@ -3,8 +3,10 @@
 import { motion } from 'framer-motion'
 import { ChevronDown, Search, MapPin, Home, Star, Award, Shield } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function HeroSection() {
+  const router = useRouter()
   const [searchType, setSearchType] = useState('Tümü')
   const [searchLocation, setSearchLocation] = useState('')
   const [scrollY, setScrollY] = useState(0)
@@ -14,6 +16,18 @@ export default function HeroSection() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  const handleSearch = () => {
+    const params = new URLSearchParams()
+    if (searchType !== 'Tümü') {
+      params.set('type', searchType)
+    }
+    if (searchLocation.trim()) {
+      params.set('location', searchLocation.trim())
+    }
+    
+    router.push(`/properties?${params.toString()}`)
+  }
 
   const heroVariants = {
     hidden: { opacity: 0 },
@@ -218,6 +232,7 @@ export default function HeroSection() {
                 </motion.div>
                 
                 <motion.button 
+                  onClick={handleSearch}
                   className="group bg-gradient-to-r from-primary-gold to-primary-gold-dark hover:from-primary-gold-dark hover:to-primary-gold text-white px-6 py-4 rounded-xl font-bold transition-all duration-300 flex items-center justify-center space-x-2 shadow-xl hover:shadow-2xl transform hover:scale-105 relative overflow-hidden"
                   initial={{ opacity: 0, x: 30 }}
                   animate={{ opacity: 1, x: 0 }}

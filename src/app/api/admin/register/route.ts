@@ -5,11 +5,11 @@ import { verifyInvitationToken } from '@/lib/jwt'
 
 export async function POST(request: NextRequest) {
   try {
-    const { token, name, password } = await request.json()
+    const { token, adminSecret, name, password, email } = await request.json()
 
-    if (!token || !name || !password) {
+    if (!name || !password) {
       return NextResponse.json(
-        { error: 'Tüm alanlar gerekli' },
+        { error: 'Ad ve şifre gereklidir' },
         { status: 400 }
       )
     }
@@ -21,33 +21,66 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const invitation = await prisma.adminInvitation.findUnique({
-      where: { token }
-    })
+    let userEmail = email
+    let userRole = 'ADMIN'
 
-    if (!invitation) {
-      return NextResponse.json(
-        { error: 'Geçersiz davet' },
-        { status: 404 }
-      )
-    }
+    // Senaryo 1: Davet token'ı ile kayıt
+    if (token) {
+      const invitation = await prisma.adminInvitation.findUnique({
+        where: { token }
+      })
 
-    if (invitation.isUsed) {
+      if (!invitation) {
+        return NextResponse.json(
+          { error: 'Geçersiz davet' },
+          { status: 404 }
+        )
+      }
+
+      if (invitation.isUsed) {
+        return NextResponse.json(
+          { error: 'Bu davet zaten kullanılmış' },
+          { status: 400 }
+        )
+      }
+
+      if (invitation.expiresAt < new Date()) {
+        return NextResponse.json(
+          { error: 'Bu davetin süresi dolmuş' },
+          { status: 400 }
+        )
+      }
+      
+      userEmail = invitation.email
+      userRole = invitation.role
+    } 
+    // Senaryo 2: Admin Secret ile kayıt
+    else if (adminSecret) {
+      if (adminSecret !== process.env.ADMIN_SECRET) {
+        return NextResponse.json(
+          { error: 'Geçersiz Admin Secret anahtarı' },
+          { status: 403 }
+        )
+      }
+
+      if (!email) {
+        return NextResponse.json(
+          { error: 'Email adresi gereklidir' },
+          { status: 400 }
+        )
+      }
+    } 
+    // Senaryo 3: Ne token ne de secret var
+    else {
       return NextResponse.json(
-        { error: 'Bu davet zaten kullanılmış' },
+        { error: 'Kayıt için davet tokenı veya Admin Secret gereklidir' },
         { status: 400 }
       )
     }
 
-    if (invitation.expiresAt < new Date()) {
-      return NextResponse.json(
-        { error: 'Bu davetin süresi dolmuş' },
-        { status: 400 }
-      )
-    }
-
+    // Email kontrolü (Her iki senaryo için de geçerli)
     const existingAdmin = await prisma.admin.findUnique({
-      where: { email: invitation.email }
+      where: { email: userEmail }
     })
 
     if (existingAdmin) {
@@ -61,17 +94,23 @@ export async function POST(request: NextRequest) {
 
     const admin = await prisma.admin.create({
       data: {
-        email: invitation.email,
+        email: userEmail,
         password: hashedPassword,
         name,
-        role: invitation.role
+        role: userRole
       }
     })
 
-    await prisma.adminInvitation.update({
-      where: { id: invitation.id },
-      data: { isUsed: true }
-    })
+    // Eğer token ile geldiyse daveti kullanıldı olarak işaretle
+    if (token) {
+      const invitation = await prisma.adminInvitation.findUnique({ where: { token } })
+      if (invitation) {
+        await prisma.adminInvitation.update({
+          where: { id: invitation.id },
+          data: { isUsed: true }
+        })
+      }
+    }
 
     return NextResponse.json({
       message: 'Admin hesabı başarıyla oluşturuldu',

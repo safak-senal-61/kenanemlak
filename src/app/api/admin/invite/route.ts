@@ -1,14 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { generateInvitationToken } from '@/lib/jwt'
+import { generateInvitationToken, verifyToken } from '@/lib/jwt'
 import { sendEmail, generateAdminInvitationEmail } from '@/lib/email'
 
 export async function POST(request: NextRequest) {
   try {
     const { email, role = 'admin' } = await request.json()
-    const adminSecret = request.headers.get('x-admin-secret')
+    
+    // Auth check: Try Bearer token first, then x-admin-secret
+    let isAuthorized = false
+    
+    // 1. Check Bearer Token (for logged in admins)
+    const authHeader = request.headers.get('authorization')
+    if (authHeader?.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1]
+      const payload = verifyToken(token)
+      if (payload) {
+        isAuthorized = true
+      }
+    }
 
-    if (adminSecret !== process.env.ADMIN_SECRET) {
+    // 2. Check Admin Secret (for scripts/setup)
+    if (!isAuthorized) {
+      const adminSecret = request.headers.get('x-admin-secret')
+      if (adminSecret === process.env.ADMIN_SECRET && process.env.ADMIN_SECRET) {
+        isAuthorized = true
+      }
+    }
+
+    if (!isAuthorized) {
       return NextResponse.json(
         { error: 'Yetkisiz erişim' },
         { status: 403 }
@@ -84,6 +104,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       message: 'Admin daveti başarıyla gönderildi',
+      invitationUrl, // Return URL for easier development/setup
       invitation: {
         id: invitation.id,
         email: invitation.email,

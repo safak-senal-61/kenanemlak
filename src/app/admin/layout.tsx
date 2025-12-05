@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { 
   Home, 
@@ -29,6 +29,21 @@ export default function AdminLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
+
+  useEffect(() => {
+    const token = localStorage.getItem('adminToken')
+    const publicPaths = ['/admin/login', '/admin/register']
+    
+    if (!token && !publicPaths.includes(pathname)) {
+      router.push('/admin/login')
+    }
+  }, [pathname, router])
+
+  // Login ve Register sayfaları için dashboard layout'unu gösterme
+  if (pathname === '/admin/login' || pathname === '/admin/register' || pathname === '/admin') {
+    return <>{children}</>
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
