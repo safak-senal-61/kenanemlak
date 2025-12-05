@@ -7,14 +7,17 @@ import Footer from '@/components/Footer'
 import { motion } from 'framer-motion'
 import { Building, Users, Award, TrendingUp } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/routing'
 
 export default function Home() {
+  const t = useTranslations('HomePage')
   const [featuredProperties, setFeaturedProperties] = useState<any[]>([])
   const [stats, setStats] = useState([
-    { icon: Building, label: 'Aktif İlan', value: '0' },
-    { icon: Users, label: 'Mutlu Müşteri', value: '500+' },
-    { icon: Award, label: 'Yıllık Tecrübe', value: '15+' },
-    { icon: TrendingUp, label: 'Başarı Oranı', value: '%98' },
+    { icon: Building, label: 'activeListings', value: '0' },
+    { icon: Users, label: 'happyCustomers', value: '500+' },
+    { icon: Award, label: 'yearsExperience', value: '15+' },
+    { icon: TrendingUp, label: 'successRate', value: '%98' },
   ])
   const [loading, setLoading] = useState(true)
 
@@ -35,7 +38,7 @@ export default function Home() {
           })))
 
           setStats(prev => prev.map(s => 
-            s.label === 'Aktif İlan' ? { ...s, value: activeProperties.length.toString() } : s
+            s.label === 'activeListings' ? { ...s, value: activeProperties.length.toString() } : s
           ))
         }
       } catch (error) {
@@ -63,10 +66,10 @@ export default function Home() {
               className="text-center mb-16"
             >
               <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                {featuredProperties.some(p => p.featured) ? 'Öne Çıkan İlanlar' : 'Son Eklenen İlanlar'}
+                {featuredProperties.some(p => p.featured) ? t('featuredTitle') : t('latestTitle')}
               </h2>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Trabzon&apos;un en güzel ve değerli gayrimenkullerini keşfedin
+                {t('subtitle')}
               </p>
             </motion.div>
 
@@ -90,12 +93,12 @@ export default function Home() {
               viewport={{ once: true }}
               className="text-center mt-12"
             >
-              <a
+              <Link
                 href="/properties"
                 className="inline-block bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl"
               >
-                Tüm İlanları Görüntüle
-              </a>
+                {t('viewAll')}
+              </Link>
             </motion.div>
           </div>
         </section>
@@ -111,10 +114,10 @@ export default function Home() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold text-white mb-4">
-              Neden Bizi Tercih Etmelisiniz?
+              {t('whyChooseUs')}
             </h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              15 yıllık deneyimimiz ve güçlü referanslarımızla hizmetinizdeyiz
+              {t('whyChooseUsSubtitle')}
             </p>
           </motion.div>
 
@@ -134,7 +137,7 @@ export default function Home() {
                     <Icon className="w-8 h-8 text-white" />
                   </div>
                   <div className="text-3xl font-bold text-yellow-400 mb-2">{stat.value}</div>
-                  <div className="text-gray-300">{stat.label}</div>
+                  <div className="text-gray-300">{t(`stats.${stat.label}`)}</div>
                 </motion.div>
               )
             })}
@@ -152,40 +155,38 @@ export default function Home() {
               viewport={{ once: true }}
             >
               <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                Trabzon&apos;un Güvenilir Emlak Danışmanı
+                {t('aboutPreview.title')}
               </h2>
               <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                15 yıllık sektör tecrübesiyle Trabzon ve çevresinde güvenilir, şeffaf ve profesyonel 
-                hizmet sunan bir gayrimenkul danışmanlık şirketiyiz.
+                {t('aboutPreview.description1')}
               </p>
               <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                Kurulduğumuz günden bu yana; doğru yatırım, doğru değerleme ve doğru iletişim 
-                prensipleriyle, müşterilerimizin ihtiyaçlarına en uygun çözümleri üretiyoruz.
+                {t('aboutPreview.description2')}
               </p>
               <div className="space-y-4 mb-8">
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                  <span className="text-gray-700">Güven ve Şeffaflık</span>
+                  <span className="text-gray-700">{t('aboutPreview.features.trust')}</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                  <span className="text-gray-700">Profesyonellik</span>
+                  <span className="text-gray-700">{t('aboutPreview.features.professionalism')}</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                  <span className="text-gray-700">Doğru Fiyatlandırma ve Piyasa Analizi</span>
+                  <span className="text-gray-700">{t('aboutPreview.features.pricing')}</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                  <span className="text-gray-700">Hızlı ve Etkin Çözüm Üretme</span>
+                  <span className="text-gray-700">{t('aboutPreview.features.solutions')}</span>
                 </div>
               </div>
-              <a
+              <Link
                 href="/about"
                 className="inline-block bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300"
               >
-                Hakkımızda Daha Fazla
-              </a>
+                {t('aboutPreview.moreButton')}
+              </Link>
             </motion.div>
             
             <motion.div
@@ -245,4 +246,4 @@ export default function Home() {
     </div>
   )
 }
-
+

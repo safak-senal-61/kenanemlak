@@ -4,40 +4,43 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { motion } from 'framer-motion'
 import { Shield, Users, TrendingUp, Award, Phone, Mail, MapPin } from 'lucide-react'
-
-const values = [
-  {
-    icon: Shield,
-    title: 'Güven ve Şeffaflık',
-    description: 'Tüm işlemlerimizde şeffaflık ve güven ilkelerinden ödün vermeyiz.'
-  },
-  {
-    icon: Users,
-    title: 'Profesyonellik',
-    description: 'Deneyimli ve uzman kadromuzla profesyonel hizmet sunuyoruz.'
-  },
-  {
-    icon: TrendingUp,
-    title: 'Doğru Fiyatlandırma',
-    description: 'Piyasa analizleriyle gerçek değer üzerinden fiyatlandırma yapıyoruz.'
-  },
-  {
-    icon: Award,
-    title: 'Müşteri Memnuniyeti',
-    description: 'Müşteri memnuniyetini her zaman önceliğimiz olarak görüyoruz.'
-  }
-]
-
-const features = [
-  '15 yıllık sektörel bilgi birikimi',
-  'Trabzon ve çevresinde güçlü portföy',
-  'Hızlı sonuç odaklı çalışma sistemi',
-  'Doğru değerleme ve gerçek piyasa analizi',
-  'Profesyonel danışmanlık ve satış sonrası destek',
-  'Yüzlerce başarılı işlem ve müşteri memnuniyeti'
-]
+import { useTranslations } from 'next-intl'
 
 export default function AboutPage() {
+  const t = useTranslations('AboutPage')
+
+  const values = [
+    {
+      icon: Shield,
+      title: t('values.trust.title'),
+      description: t('values.trust.desc')
+    },
+    {
+      icon: Users,
+      title: t('values.professionalism.title'),
+      description: t('values.professionalism.desc')
+    },
+    {
+      icon: TrendingUp,
+      title: t('values.pricing.title'),
+      description: t('values.pricing.desc')
+    },
+    {
+      icon: Award,
+      title: t('values.satisfaction.title'),
+      description: t('values.satisfaction.desc')
+    }
+  ]
+
+  const features = [
+    t('features.0'),
+    t('features.1'),
+    t('features.2'),
+    t('features.3'),
+    t('features.4'),
+    t('features.5')
+  ]
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -52,12 +55,11 @@ export default function AboutPage() {
           >
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
               <span className="bg-gradient-to-r from-yellow-400 to-yellow-500 bg-clip-text text-transparent">
-                Hakkımızda
+                {t('title')}
               </span>
             </h1>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              Kenan Kadıoğlu Gayrimenkul, 15 yıllık sektör tecrübesiyle Trabzon ve çevresinde 
-              güvenilir, şeffaf ve profesyonel hizmet sunan bir gayrimenkul danışmanlık şirketidir.
+              {t('heroDescription')}
             </p>
           </motion.div>
         </div>
@@ -74,16 +76,13 @@ export default function AboutPage() {
               transition={{ duration: 0.8 }}
             >
               <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                Trabzon&apos;un Güvenilir Emlak Danışmanı
+                {t('contentTitle')}
               </h2>
               <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                Kurulduğumuz günden bu yana; doğru yatırım, doğru değerleme ve doğru iletişim 
-                prensipleriyle, müşterilerimizin ihtiyaçlarına en uygun çözümleri üretiyoruz.
+                {t('contentDescription1')}
               </p>
               <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                Portföyümüzde konut, arsa, ticari gayrimenkul ve yatırım amaçlı projeler yer alırken; 
-                her müşterimize özel analiz, doğru fiyatlandırma ve sonuç odaklı çalışma modeliyle 
-                hizmet veriyoruz.
+                {t('contentDescription2')}
               </p>
               <div className="space-y-3">
                 {features.map((feature, index) => (

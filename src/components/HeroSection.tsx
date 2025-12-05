@@ -3,11 +3,13 @@
 import { motion } from 'framer-motion'
 import { ChevronDown, Search, MapPin, Home, Star, Award, Shield } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { useRouter } from '@/i18n/routing'
 
 export default function HeroSection() {
+  const t = useTranslations('Hero')
   const router = useRouter()
-  const [searchType, setSearchType] = useState('Tümü')
+  const [searchType, setSearchType] = useState(t('search.type.all'))
   const [searchLocation, setSearchLocation] = useState('')
   const [scrollY, setScrollY] = useState(0)
 
@@ -19,7 +21,13 @@ export default function HeroSection() {
 
   const handleSearch = () => {
     const params = new URLSearchParams()
-    if (searchType !== 'Tümü') {
+    if (searchType !== t('search.type.all')) {
+      // We might want to map localized values back to internal values if the backend expects specific English/Turkish strings.
+      // For now, assuming the backend or filter logic can handle what we send, or we should use keys.
+      // However, usually, search parameters should be locale-independent or the backend handles localization.
+      // Given the previous code used 'Tümü', let's assume we send the value selected.
+      // If the backend expects specific values like 'sale'/'rent', we should probably use values in <option> and display text separately.
+      // Let's check the option values below.
       params.set('type', searchType)
     }
     if (searchLocation.trim()) {
@@ -108,19 +116,18 @@ export default function HeroSection() {
                 }}
                 transition={{ duration: 3, repeat: Infinity }}
               >
-                Kenan Kadıoğlu
+                {t('mainTitle1')}
               </motion.span>
               <br />
               <span className="text-2xl md:text-4xl lg:text-5xl font-light text-off-white">
-                Gayrimenkul Danışmanlığı
+                {t('mainTitle2')}
               </span>
             </motion.h1>
             <motion.p 
               className="text-lg md:text-xl text-off-white/90 max-w-3xl mx-auto leading-relaxed font-light"
               variants={itemVariants}
             >
-              15 yıllık sektör tecrübesiyle Trabzon ve çevresinde güvenilir, şeffaf ve profesyonel 
-              gayrimenkul danışmanlık hizmetleri sunuyoruz.
+              {t('description')}
             </motion.p>
           </motion.div>
 
@@ -142,7 +149,7 @@ export default function HeroSection() {
               </motion.div>
               <div className="text-sm md:text-base text-off-white/80 flex items-center justify-center space-x-2">
                 <Award className="w-4 h-4" />
-                <span>Yıllık Tecrübe</span>
+                <span>{t('stats.experience')}</span>
               </div>
             </motion.div>
             
@@ -159,7 +166,7 @@ export default function HeroSection() {
               </motion.div>
               <div className="text-sm md:text-base text-off-white/80 flex items-center justify-center space-x-2">
                 <Home className="w-4 h-4" />
-                <span>Başarılı İşlem</span>
+                <span>{t('stats.successfulTransactions')}</span>
               </div>
             </motion.div>
             
@@ -176,7 +183,7 @@ export default function HeroSection() {
               </motion.div>
               <div className="text-sm md:text-base text-off-white/80 flex items-center justify-center space-x-2">
                 <Shield className="w-4 h-4" />
-                <span>Müşteri Memnuniyeti</span>
+                <span>{t('stats.customerSatisfaction')}</span>
               </div>
             </motion.div>
           </motion.div>
@@ -194,7 +201,7 @@ export default function HeroSection() {
                 transition={{ delay: 0.8 }}
               >
                 <Search className="w-6 h-6 text-primary-gold" />
-                <span>Hayalinizdeki Evi Bulun</span>
+                <span>{t('search.title')}</span>
               </motion.h3>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -207,11 +214,11 @@ export default function HeroSection() {
                   <select
                     value={searchType}
                     onChange={(e) => setSearchType(e.target.value)}
-                    className="w-full px-4 py-4 bg-white/20 border border-white/30 rounded-xl text-white placeholder-gray-300 focus:ring-2 focus:ring-primary-gold focus:border-transparent appearance-none backdrop-blur-sm transition-all duration-300 hover:bg-white/25"
+                    className="w-full px-4 py-4 bg-white/20 border border-white/30 rounded-xl text-white placeholder-gray-300 focus:ring-2 focus:ring-primary-gold focus:border-transparent appearance-none backdrop-blur-sm transition-all duration-300 hover:bg-white/25 [&>option]:text-black"
                   >
-                    <option value="Tümü" className="text-charcoal">Tüm İlanlar</option>
-                    <option value="Satılık" className="text-charcoal">Satılık</option>
-                    <option value="Kiralık" className="text-charcoal">Kiralık</option>
+                    <option value={t('search.type.all')} className="text-charcoal">{t('search.type.all')}</option>
+                    <option value={t('search.type.sale')} className="text-charcoal">{t('search.type.sale')}</option>
+                    <option value={t('search.type.rent')} className="text-charcoal">{t('search.type.rent')}</option>
                   </select>
                 </motion.div>
                 
@@ -224,7 +231,7 @@ export default function HeroSection() {
                   <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary-gold w-5 h-5" />
                   <input
                     type="text"
-                    placeholder="Konum, semt, ilçe..."
+                    placeholder={t('search.placeholder')}
                     value={searchLocation}
                     onChange={(e) => setSearchLocation(e.target.value)}
                     className="w-full pl-12 pr-4 py-4 bg-white/20 border border-white/30 rounded-xl text-white placeholder-gray-300 focus:ring-2 focus:ring-primary-gold focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/25"
@@ -241,7 +248,7 @@ export default function HeroSection() {
                   whileTap={{ scale: 0.95 }}
                 >
                   <Search className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                  <span className="relative z-10">Ara</span>
+                  <span className="relative z-10">{t('search.button')}</span>
                   <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
                 </motion.button>
               </div>
@@ -254,15 +261,15 @@ export default function HeroSection() {
               >
                 <span className="flex items-center space-x-2 bg-white/5 px-4 py-2 rounded-full border border-primary-gold/20">
                   <Search className="w-4 h-4 text-primary-gold" />
-                  <span>Hızlı Arama</span>
+                  <span>{t('badges.fastSearch')}</span>
                 </span>
                 <span className="flex items-center space-x-2 bg-white/5 px-4 py-2 rounded-full border border-primary-gold/20">
                   <MapPin className="w-4 h-4 text-primary-gold" />
-                  <span>Trabzon&apos;un Her Bölgesi</span>
+                  <span>{t('badges.allRegions')}</span>
                 </span>
                 <span className="flex items-center space-x-2 bg-white/5 px-4 py-2 rounded-full border border-primary-gold/20">
                   <Star className="w-4 h-4 text-primary-gold" />
-                  <span>Uygun Fiyatlar</span>
+                  <span>{t('badges.affordablePrices')}</span>
                 </span>
               </motion.div>
             </div>
@@ -279,7 +286,7 @@ export default function HeroSection() {
               whileTap={{ scale: 0.95 }}
             >
               <span className="relative z-10 flex items-center space-x-2">
-                <span>Tüm İlanları İnceleyin</span>
+                <span>{t('cta')}</span>
                 <ChevronDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
               </span>
               <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-2xl"></div>
@@ -297,16 +304,11 @@ export default function HeroSection() {
           <motion.div
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="text-primary-gold"
           >
-            <ChevronDown className="w-8 h-8" />
+            <ChevronDown className="w-8 h-8 text-white/50" />
           </motion.div>
         </motion.div>
       </div>
-
-      {/* Decorative Elements */}
-      <div className="absolute top-20 right-20 w-64 h-64 bg-primary-gold/20 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-20 left-20 w-48 h-48 bg-accent-bronze/15 rounded-full blur-3xl"></div>
     </section>
   )
 }

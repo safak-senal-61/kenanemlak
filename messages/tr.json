@@ -1,0 +1,136 @@
+{
+  "Navigation": {
+    "home": "Ana Sayfa",
+    "properties": "İlanlar",
+    "about": "Hakkımızda",
+    "contact": "İletişim"
+  },
+  "Header": {
+    "phone": "+90 462 230 00 00",
+    "email": "info@kenankadioglu.com",
+    "location": "Trabzon, Türkiye"
+  },
+  "Hero": {
+    "mainTitle1": "Kenan Kadıoğlu",
+    "mainTitle2": "Gayrimenkul Danışmanlığı",
+    "description": "15 yıllık sektör tecrübesiyle Trabzon ve çevresinde güvenilir, şeffaf ve profesyonel gayrimenkul danışmanlık hizmetleri sunuyoruz.",
+    "stats": {
+      "experience": "Yıllık Tecrübe",
+      "successfulTransactions": "Başarılı İşlem",
+      "customerSatisfaction": "Müşteri Memnuniyeti"
+    },
+    "search": {
+      "title": "Hayalinizdeki Evi Bulun",
+      "type": {
+        "all": "Tüm İlanlar",
+        "sale": "Satılık",
+        "rent": "Kiralık"
+      },
+      "placeholder": "Konum, semt, ilçe...",
+      "button": "Ara"
+    },
+    "badges": {
+      "fastSearch": "Hızlı Arama",
+      "allRegions": "Trabzon'un Her Bölgesi",
+      "affordablePrices": "Uygun Fiyatlar"
+    },
+    "cta": "Tüm İlanları İnceleyin"
+  },
+  "HomePage": {
+    "featuredTitle": "Öne Çıkan İlanlar",
+    "latestTitle": "Son Eklenen İlanlar",
+    "subtitle": "Trabzon'un en güzel ve değerli gayrimenkullerini keşfedin",
+    "viewAll": "Tüm İlanları Görüntüle",
+    "whyChooseUs": "Neden Bizi Tercih Etmelisiniz?",
+    "whyChooseUsSubtitle": "15 yıllık deneyimimiz ve güçlü referanslarımızla hizmetinizdeyiz",
+    "stats": {
+      "activeListings": "Aktif İlan",
+      "happyCustomers": "Mutlu Müşteri",
+      "yearsExperience": "Yıllık Tecrübe",
+      "successRate": "Başarı Oranı"
+    },
+    "aboutPreview": {
+      "title": "Trabzon'un Güvenilir Emlak Danışmanı",
+      "description1": "15 yıllık sektör tecrübesiyle Trabzon ve çevresinde güvenilir, şeffaf ve profesyonel hizmet sunan bir gayrimenkul danışmanlık şirketiyiz.",
+      "description2": "Kurulduğumuz günden bu yana; doğru yatırım, doğru değerleme ve doğru iletişim prensipleriyle, müşterilerimizin ihtiyaçlarına en uygun çözümleri üretiyoruz.",
+      "features": {
+        "trust": "Güven ve Şeffaflık",
+        "professionalism": "Profesyonellik",
+        "pricing": "Doğru Fiyatlandırma ve Piyasa Analizi",
+        "solutions": "Hızlı ve Etkin Çözüm Üretme"
+      },
+      "moreButton": "Hakkımızda Daha Fazla"
+    }
+  },
+  "AboutPage": {
+    "title": "Hakkımızda",
+    "heroDescription": "Kenan Kadıoğlu Gayrimenkul, 15 yıllık sektör tecrübesiyle Trabzon ve çevresinde güvenilir, şeffaf ve profesyonel hizmet sunan bir gayrimenkul danışmanlık şirketidir.",
+    "contentTitle": "Trabzon'un Güvenilir Emlak Danışmanı",
+    "contentDescription1": "Kurulduğumuz günden bu yana; doğru yatırım, doğru değerleme ve doğru iletişim prensipleriyle, müşterilerimizin ihtiyaçlarına en uygun çözümleri üretiyoruz.",
+    "contentDescription2": "Portföyümüzde konut, arsa, ticari gayrimenkul ve yatırım amaçlı projeler yer alırken; her müşterimize özel analiz, doğru fiyatlandırma ve sonuç odaklı çalışma modeliyle hizmet veriyoruz.",
+    "values": {
+       "trust": { "title": "Güven ve Şeffaflık", "desc": "Tüm işlemlerimizde şeffaflık ve güven ilkelerinden ödün vermeyiz." },
+       "professionalism": { "title": "Profesyonellik", "desc": "Deneyimli ve uzman kadromuzla profesyonel hizmet sunuyoruz." },
+       "pricing": { "title": "Doğru Fiyatlandırma", "desc": "Piyasa analizleriyle gerçek değer üzerinden fiyatlandırma yapıyoruz." },
+       "satisfaction": { "title": "Müşteri Memnuniyeti", "desc": "Müşteri memnuniyetini her zaman önceliğimiz olarak görüyoruz." }
+    },
+    "features": [
+       "15 yıllık sektörel bilgi birikimi",
+       "Trabzon ve çevresinde güçlü portföy",
+       "Hızlı sonuç odaklı çalışma sistemi",
+       "Doğru değerleme ve gerçek piyasa analizi",
+       "Profesyonel danışmanlık ve satış sonrası destek",
+       "Yüzlerce başarılı işlem ve müşteri memnuniyeti"
+    ]
+  },
+  "ContactPage": {
+    "title": "İletişime Geçin",
+    "subtitle": "Hayalinizdeki gayrimenkule ulaşmanız için buradayız. Size en kısa sürede yardımcı olalım.",
+    "infoTitle": "İletişim Bilgileri",
+    "labels": {
+       "phone": "Telefon",
+       "email": "E-posta",
+       "address": "Adres",
+       "hours": "Çalışma Saatleri",
+       "hoursValue": "Pazartesi - Cumartesi: 09:00 - 18:00",
+       "support": "7/24 e-posta desteği",
+       "office": "Merkez Ofis"
+    },
+    "formTitle": "Hızlı İletişim Formu",
+    "form": {
+       "name": "Adınız Soyadınız",
+       "email": "E-posta Adresiniz",
+       "phone": "Telefon Numaranız",
+       "subject": "Konu",
+       "message": "Mesajınız",
+       "submit": "Gönder",
+       "success": "Mesajınız başarıyla gönderildi!"
+    }
+  },
+  "PropertiesPage": {
+    "title": "Hayalinizdeki Yaşam Alanı",
+    "subtitle": "Trabzon'un en seçkin gayrimenkul portföyü ile tanışın. Modern, konforlu ve size özel seçenekler.",
+    "searchPlaceholder": "İlan başlığı, konum veya özellik ara...",
+    "filters": {
+       "type": "İlan Türü",
+       "category": "Kategori",
+       "location": "Konum",
+       "sort": "Sıralama",
+       "all": "Tümü"
+    },
+    "sortOptions": {
+       "newest": "En Yeniler",
+       "priceAsc": "Fiyat (Artan)",
+       "priceDesc": "Fiyat (Azalan)",
+       "size": "Genişlik"
+    }
+  },
+  "Footer": {
+    "rights": "Tüm hakları saklıdır."
+  },
+  "LanguageSwitcher": {
+    "tr": "Türkçe",
+    "en": "English",
+    "ar": "العربية"
+  }
+}

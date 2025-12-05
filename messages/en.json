@@ -1,0 +1,136 @@
+{
+  "Navigation": {
+    "home": "Home",
+    "properties": "Properties",
+    "about": "About Us",
+    "contact": "Contact"
+  },
+  "Header": {
+    "phone": "+90 462 230 00 00",
+    "email": "info@kenankadioglu.com",
+    "location": "Trabzon, Turkey"
+  },
+  "Hero": {
+    "mainTitle1": "Kenan Kadıoğlu",
+    "mainTitle2": "Real Estate Consultancy",
+    "description": "With 15 years of sector experience, we offer reliable, transparent and professional real estate consultancy services in Trabzon and its surroundings.",
+    "stats": {
+      "experience": "Years Experience",
+      "successfulTransactions": "Successful Transactions",
+      "customerSatisfaction": "Customer Satisfaction"
+    },
+    "search": {
+      "title": "Find Your Dream Home",
+      "type": {
+        "all": "All Properties",
+        "sale": "For Sale",
+        "rent": "For Rent"
+      },
+      "placeholder": "Location, district, neighborhood...",
+      "button": "Search"
+    },
+    "badges": {
+      "fastSearch": "Fast Search",
+      "allRegions": "All Regions of Trabzon",
+      "affordablePrices": "Affordable Prices"
+    },
+    "cta": "View All Properties"
+  },
+  "HomePage": {
+    "featuredTitle": "Featured Properties",
+    "latestTitle": "Latest Properties",
+    "subtitle": "Discover the most beautiful and valuable real estate in Trabzon",
+    "viewAll": "View All Properties",
+    "whyChooseUs": "Why Choose Us?",
+    "whyChooseUsSubtitle": "We are at your service with 15 years of experience and strong references",
+    "stats": {
+      "activeListings": "Active Listings",
+      "happyCustomers": "Happy Customers",
+      "yearsExperience": "Years Experience",
+      "successRate": "Success Rate"
+    },
+    "aboutPreview": {
+      "title": "Trabzon's Trusted Real Estate Consultant",
+      "description1": "We are a real estate consultancy company providing reliable, transparent and professional services in Trabzon and its surroundings with 15 years of industry experience.",
+      "description2": "Since the day we were founded; we produce the most suitable solutions for our customers' needs with the principles of right investment, right valuation and right communication.",
+      "features": {
+        "trust": "Trust and Transparency",
+        "professionalism": "Professionalism",
+        "pricing": "Accurate Pricing and Market Analysis",
+        "solutions": "Fast and Effective Solution Generation"
+      },
+      "moreButton": "More About Us"
+    }
+  },
+  "AboutPage": {
+    "title": "About Us",
+    "heroDescription": "Kenan Kadıoğlu Real Estate is a real estate consultancy company providing reliable, transparent and professional services in Trabzon and its surroundings with 15 years of industry experience.",
+    "contentTitle": "Trabzon's Trusted Real Estate Consultant",
+    "contentDescription1": "Since the day we were founded; we produce the most suitable solutions for our customers' needs with the principles of right investment, right valuation and right communication.",
+    "contentDescription2": "While our portfolio includes residential, land, commercial real estate and investment projects; we serve each customer with a special analysis, accurate pricing and result-oriented working model.",
+    "values": {
+       "trust": { "title": "Trust and Transparency", "desc": "We do not compromise on transparency and trust principles in all our transactions." },
+       "professionalism": { "title": "Professionalism", "desc": "We offer professional service with our experienced and expert staff." },
+       "pricing": { "title": "Accurate Pricing", "desc": "We price over real value with market analysis." },
+       "satisfaction": { "title": "Customer Satisfaction", "desc": "We always see customer satisfaction as our priority." }
+    },
+    "features": [
+       "15 years of sectoral knowledge",
+       "Strong portfolio in Trabzon and surroundings",
+       "Fast result-oriented working system",
+       "Accurate valuation and real market analysis",
+       "Professional consultancy and after-sales support",
+       "Hundreds of successful transactions and customer satisfaction"
+    ]
+  },
+  "ContactPage": {
+    "title": "Contact Us",
+    "subtitle": "We are here to help you reach your dream real estate. Let us help you as soon as possible.",
+    "infoTitle": "Contact Information",
+    "labels": {
+       "phone": "Phone",
+       "email": "Email",
+       "address": "Address",
+       "hours": "Working Hours",
+       "hoursValue": "Monday - Saturday: 09:00 - 18:00",
+       "support": "24/7 email support",
+       "office": "Head Office"
+    },
+    "formTitle": "Quick Contact Form",
+    "form": {
+       "name": "Your Name",
+       "email": "Your Email Address",
+       "phone": "Phone Number",
+       "subject": "Subject",
+       "message": "Your Message",
+       "submit": "Send",
+       "success": "Your message has been sent successfully!"
+    }
+  },
+  "PropertiesPage": {
+    "title": "Your Dream Living Space",
+    "subtitle": "Meet Trabzon's most exclusive real estate portfolio. Modern, comfortable and special options for you.",
+    "searchPlaceholder": "Search by title, location or feature...",
+    "filters": {
+       "type": "Type",
+       "category": "Category",
+       "location": "Location",
+       "sort": "Sort",
+       "all": "All"
+    },
+    "sortOptions": {
+       "newest": "Newest",
+       "priceAsc": "Price (Low to High)",
+       "priceDesc": "Price (High to Low)",
+       "size": "Size"
+    }
+  },
+  "Footer": {
+    "rights": "All rights reserved."
+  },
+  "LanguageSwitcher": {
+    "tr": "Türkçe",
+    "en": "English",
+    "ar": "العربية"
+  }
+}

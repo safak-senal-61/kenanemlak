@@ -5,8 +5,10 @@ import Footer from '@/components/Footer'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { Phone, Mail, MapPin, Clock, Send, User, MessageSquare } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 export default function ContactPage() {
+  const t = useTranslations('ContactPage')
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -24,7 +26,7 @@ export default function ContactPage() {
     e.preventDefault()
     console.log('Form submitted:', formData)
     // Here you would typically send the data to your API
-    alert('Mesajınız başarıyla gönderildi!')
+    alert(t('form.success'))
   }
 
   return (
@@ -41,11 +43,11 @@ export default function ContactPage() {
           >
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
               <span className="bg-gradient-to-r from-yellow-400 to-yellow-500 bg-clip-text text-transparent">
-                İletişime Geçin
+                {t('title')}
               </span>
             </h1>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              Hayalinizdeki gayrimenkule ulaşmanız için buradayız. Size en kısa sürede yardımcı olalım.
+              {t('subtitle')}
             </p>
           </motion.div>
         </div>
@@ -63,7 +65,7 @@ export default function ContactPage() {
               transition={{ duration: 0.8 }}
             >
               <h2 className="text-3xl font-bold text-gray-900 mb-8">
-                İletişim Bilgileri
+                {t('infoTitle')}
               </h2>
               
               <div className="space-y-6">
@@ -72,9 +74,9 @@ export default function ContactPage() {
                     <Phone className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Telefon</h3>
+                    <h3 className="font-semibold text-gray-900 mb-1">{t('labels.phone')}</h3>
                     <p className="text-gray-600">+90 462 230 00 00</p>
-                    <p className="text-sm text-gray-500">Pazartesi - Cumartesi: 09:00 - 18:00</p>
+                    <p className="text-sm text-gray-500">{t('labels.hoursValue')}</p>
                   </div>
                 </div>
                 
@@ -83,9 +85,9 @@ export default function ContactPage() {
                     <Mail className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">E-posta</h3>
+                    <h3 className="font-semibold text-gray-900 mb-1">{t('labels.email')}</h3>
                     <p className="text-gray-600">info@kenankadioglu.com</p>
-                    <p className="text-sm text-gray-500">7/24 e-posta desteği</p>
+                    <p className="text-sm text-gray-500">{t('labels.support')}</p>
                   </div>
                 </div>
                 
@@ -94,9 +96,9 @@ export default function ContactPage() {
                     <MapPin className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Adres</h3>
+                    <h3 className="font-semibold text-gray-900 mb-1">{t('labels.address')}</h3>
                     <p className="text-gray-600">Trabzon, Türkiye</p>
-                    <p className="text-sm text-gray-500">Merkez Ofis</p>
+                    <p className="text-sm text-gray-500">{t('labels.office')}</p>
                   </div>
                 </div>
                 
@@ -105,9 +107,8 @@ export default function ContactPage() {
                     <Clock className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Çalışma Saatleri</h3>
-                    <p className="text-gray-600">Pazartesi - Cumartesi</p>
-                    <p className="text-sm text-gray-500">09:00 - 18:00</p>
+                    <h3 className="font-semibold text-gray-900 mb-1">{t('labels.hours')}</h3>
+                    <p className="text-gray-600">{t('labels.hoursValue')}</p>
                   </div>
                 </div>
               </div>
@@ -133,14 +134,14 @@ export default function ContactPage() {
               transition={{ duration: 0.8 }}
             >
               <h2 className="text-3xl font-bold text-gray-900 mb-8">
-                Hızlı İletişim Formu
+                {t('formTitle')}
               </h2>
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                      Adınız Soyadınız *
+                      {t('form.name')} *
                     </label>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -152,14 +153,14 @@ export default function ContactPage() {
                         onChange={handleInputChange}
                         required
                         className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                        placeholder="Adınız Soyadınız"
+                        placeholder={t('form.name')}
                       />
                     </div>
                   </div>
                   
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                      E-posta Adresiniz *
+                      {t('form.email')} *
                     </label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -171,7 +172,7 @@ export default function ContactPage() {
                         onChange={handleInputChange}
                         required
                         className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                        placeholder="ornek@email.com"
+                        placeholder={t('form.email')}
                       />
                     </div>
                   </div>
@@ -180,7 +181,7 @@ export default function ContactPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                      Telefon Numaranız
+                      {t('form.phone')}
                     </label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -198,52 +199,45 @@ export default function ContactPage() {
                   
                   <div>
                     <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
-                      Konu *
+                      {t('form.subject')}
                     </label>
-                    <select
-                      id="subject"
-                      name="subject"
-                      value={formData.subject}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                    >
-                      <option value="">Konu Seçin</option>
-                      <option value="Satılık Gayrimenkul">Satılık Gayrimenkul</option>
-                      <option value="Kiralık Gayrimenkul">Kiralık Gayrimenkul</option>
-                      <option value="Gayrimenkul Değerleme">Gayrimenkul Değerleme</option>
-                      <option value="Yatırım Danışmanlığı">Yatırım Danışmanlığı</option>
-                      <option value="Genel Bilgi">Genel Bilgi</option>
-                      <option value="Diğer">Diğer</option>
-                    </select>
+                    <div className="relative">
+                      <MessageSquare className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                      <input
+                        type="text"
+                        id="subject"
+                        name="subject"
+                        value={formData.subject}
+                        onChange={handleInputChange}
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                        placeholder={t('form.subject')}
+                      />
+                    </div>
                   </div>
                 </div>
-                
+
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                    Mesajınız *
+                    {t('form.message')} *
                   </label>
-                  <div className="relative">
-                    <MessageSquare className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
-                    <textarea
-                      id="message"
-                      name="message"
-                      value={formData.message}
-                      onChange={handleInputChange}
-                      required
-                      rows={5}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                      placeholder="Mesajınızı buraya yazın..."
-                    />
-                  </div>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    required
+                    rows={4}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    placeholder={t('form.message')}
+                  ></textarea>
                 </div>
-                
+
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2"
+                  className="w-full bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2"
                 >
                   <Send className="w-5 h-5" />
-                  <span>Mesaj Gönder</span>
+                  <span>{t('form.submit')}</span>
                 </button>
               </form>
             </motion.div>

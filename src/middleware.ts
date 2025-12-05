@@ -1,17 +1,28 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import createMiddleware from 'next-intl/middleware';
 
-export function middleware(request: NextRequest) {
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('x-pathname', request.nextUrl.pathname);
+const intlMiddleware = createMiddleware({
+  locales: ['tr', 'en', 'ar'],
+  defaultLocale: 'tr'
+});
 
-  return NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
+export default function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // If it's an admin path, just set the header and return (skip next-intl)
+  if (pathname.startsWith('/admin')) {
+    const response = NextResponse.next();
+    response.headers.set('x-pathname', pathname);
+    return response;
+  }
+
+  // Otherwise run next-intl
+  const response = intlMiddleware(request);
+  response.headers.set('x-pathname', pathname);
+  return response;
 }
 
 export const config = {
-  matcher: '/((?!_next/static|_next/image|favicon.ico).*)',
+  matcher: ['/((?!api|_next|.*\\..*).*)']
 };

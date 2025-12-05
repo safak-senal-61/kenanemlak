@@ -1,23 +1,27 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import { Link } from '@/i18n/routing'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Phone, Mail, MapPin, Home, Building, User, MessageCircle, Bell } from 'lucide-react'
 import Logo from '@/components/Logo'
 import SubscriptionModal from './SubscriptionModal'
-
-const navigation = [
-  { name: 'Ana Sayfa', href: '/', icon: Home },
-  { name: 'İlanlar', href: '/properties', icon: Building },
-  { name: 'Hakkımızda', href: '/about', icon: User },
-  { name: 'İletişim', href: '/contact', icon: MessageCircle },
-]
+import { useTranslations } from 'next-intl'
+import LanguageSwitcher from './LanguageSwitcher'
 
 export default function Header() {
+  const t = useTranslations('Navigation')
+  const tHeader = useTranslations('Header')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false)
+
+  const navigation = [
+    { name: t('home'), href: '/', icon: Home },
+    { name: t('properties'), href: '/properties', icon: Building },
+    { name: t('about'), href: '/about', icon: User },
+    { name: t('contact'), href: '/contact', icon: MessageCircle },
+  ]
 
   useEffect(() => {
     const handleScroll = () => {
@@ -63,23 +67,28 @@ export default function Header() {
                 whileHover={{ scale: 1.05 }}
               >
                 <Phone className="w-4 h-4" />
-                <span>+90 462 230 00 00</span>
+                <span>{tHeader('phone')}</span>
               </motion.span>
               <motion.span 
                 className="flex items-center space-x-2 hover:text-primary-gold transition-colors cursor-pointer"
                 whileHover={{ scale: 1.05 }}
               >
                 <Mail className="w-4 h-4" />
-                <span>info@kenankadioglu.com</span>
+                <span>{tHeader('email')}</span>
               </motion.span>
             </div>
-            <motion.div 
-              className="flex items-center space-x-2 hover:text-primary-gold transition-colors cursor-pointer"
-              whileHover={{ scale: 1.05 }}
-            >
-              <MapPin className="w-4 h-4" />
-              <span>Trabzon, Türkiye</span>
-            </motion.div>
+            <div className="flex items-center space-x-6">
+              <motion.div 
+                className="flex items-center space-x-2 hover:text-primary-gold transition-colors cursor-pointer"
+                whileHover={{ scale: 1.05 }}
+              >
+                <MapPin className="w-4 h-4" />
+                <span>{tHeader('location')}</span>
+              </motion.div>
+              <div className="border-l border-gray-600 pl-6">
+                <LanguageSwitcher />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -140,15 +149,18 @@ export default function Header() {
             </nav>
 
             {/* Mobile menu button */}
-            <motion.button
-              type="button"
-              className="lg:hidden p-3 text-white hover:text-primary-gold transition-all duration-300 rounded-lg hover:bg-primary-gold/10"
-              onClick={() => setMobileMenuOpen(true)}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Menu className="w-6 h-6" />
-            </motion.button>
+            <div className="lg:hidden flex items-center gap-4">
+              <LanguageSwitcher />
+              <motion.button
+                type="button"
+                className="p-3 text-white hover:text-primary-gold transition-all duration-300 rounded-lg hover:bg-primary-gold/10"
+                onClick={() => setMobileMenuOpen(true)}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Menu className="w-6 h-6" />
+              </motion.button>
+            </div>
           </div>
         </div>
       </motion.header>
@@ -203,76 +215,47 @@ export default function Header() {
                   </motion.button>
                 </div>
 
-                {/* Navigation */}
-                <nav className="flex-1 p-6 space-y-2">
-                  {navigation.map((item, index) => (
-                    <motion.div
-                      key={item.name}
-                      initial={{ opacity: 0, x: 50 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.1 * index }}
-                    >
-                      <Link
-                        href={item.href}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center space-x-4 text-charcoal hover:text-primary-gold p-4 rounded-xl hover:bg-primary-gold/10 transition-all duration-300 group"
+                {/* Menu Items */}
+                <div className="flex-1 overflow-y-auto py-6 px-4 space-y-2">
+                  {navigation.map((item, index) => {
+                    const Icon = item.icon
+                    return (
+                      <motion.div
+                        key={item.name}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
                       >
-                        <item.icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                        <span className="font-medium">{item.name}</span>
-                        <div className="ml-auto w-2 h-2 bg-primary-gold rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                      </Link>
-                    </motion.div>
-                  ))}
-                </nav>
+                        <Link
+                          href={item.href}
+                          className="flex items-center space-x-4 p-4 rounded-xl text-charcoal hover:bg-white hover:shadow-md hover:text-primary-gold transition-all duration-300 group"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <div className="p-2 bg-gray-100 rounded-lg group-hover:bg-primary-gold/10 transition-colors">
+                            <Icon className="w-5 h-5" />
+                          </div>
+                          <span className="font-medium">{item.name}</span>
+                        </Link>
+                      </motion.div>
+                    )
+                  })}
+                </div>
 
-                {/* Footer */}
-                <div className="p-6 border-t border-primary-gold/20 bg-white">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                  >
-                    <button
-                      onClick={() => {
-                        setIsSubscribeModalOpen(true)
-                        setMobileMenuOpen(false)
-                      }}
-                      className="flex items-center justify-center space-x-2 w-full bg-gradient-to-r from-primary-gold to-primary-gold-dark text-white p-4 rounded-xl font-medium hover:from-primary-gold-dark hover:to-primary-gold transition-all duration-300 shadow-lg"
-                    >
-                      <Bell className="w-5 h-5" />
-                      <span>Abone Ol</span>
-                    </button>
-                  </motion.div>
-                  
-                  {/* Contact Info */}
-                  <div className="mt-6 space-y-3 text-sm text-charcoal/70">
-                    <motion.div 
-                      className="flex items-center space-x-3"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.5 }}
-                    >
-                      <Phone className="w-4 h-4 text-primary-gold" />
-                      <span>+90 462 230 00 00</span>
-                    </motion.div>
-                    <motion.div 
-                      className="flex items-center space-x-3"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.6 }}
-                    >
-                      <Mail className="w-4 h-4 text-primary-gold" />
-                      <span>info@kenankadioglu.com</span>
-                    </motion.div>
-                    <motion.div 
-                      className="flex items-center space-x-3"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.7 }}
-                    >
-                      <MapPin className="w-4 h-4 text-primary-gold" />
-                      <span>Trabzon, Türkiye</span>
-                    </motion.div>
+                {/* Footer Info */}
+                <div className="p-6 bg-white border-t border-gray-100">
+                  <div className="space-y-4">
+                    <a href="tel:+904622300000" className="flex items-center space-x-3 text-gray-600 hover:text-primary-gold transition-colors">
+                      <Phone className="w-5 h-5" />
+                      <span>{tHeader('phone')}</span>
+                    </a>
+                    <a href="mailto:info@kenankadioglu.com" className="flex items-center space-x-3 text-gray-600 hover:text-primary-gold transition-colors">
+                      <Mail className="w-5 h-5" />
+                      <span>{tHeader('email')}</span>
+                    </a>
+                    <div className="flex items-center space-x-3 text-gray-600">
+                      <MapPin className="w-5 h-5" />
+                      <span>{tHeader('location')}</span>
+                    </div>
                   </div>
                 </div>
               </div>
