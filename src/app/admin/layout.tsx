@@ -11,12 +11,14 @@ import {
   Menu, 
   X,
   Building,
-  BarChart3
+  BarChart3,
+  Layers
 } from 'lucide-react'
 
 const menuItems = [
   { href: '/admin', icon: Home, label: 'Dashboard' },
   { href: '/admin/properties', icon: Building, label: 'Emlaklar' },
+  { href: '/admin/projects', icon: Layers, label: 'Projeler' },
   { href: '/admin/properties/add', icon: Plus, label: 'Yeni İlan' },
   { href: '/admin/analytics', icon: BarChart3, label: 'Analitik' },
   { href: '/admin/settings', icon: Settings, label: 'Ayarlar' },
@@ -33,15 +35,15 @@ export default function AdminLayout({
 
   useEffect(() => {
     const token = localStorage.getItem('adminToken')
-    const publicPaths = ['/admin/login', '/admin/register']
+    const publicPaths = ['/admin/login', '/admin/register', '/admin/setup']
     
     if (!token && !publicPaths.includes(pathname)) {
       router.push('/admin/login')
     }
   }, [pathname, router])
 
-  // Login ve Register sayfaları için dashboard layout'unu gösterme
-  if (pathname === '/admin/login' || pathname === '/admin/register' || pathname === '/admin') {
+  // Login, Register ve Setup sayfaları için dashboard layout'unu gösterme
+  if (pathname === '/admin/login' || pathname === '/admin/register' || pathname === '/admin/setup' || pathname === '/admin') {
     return <>{children}</>
   }
 

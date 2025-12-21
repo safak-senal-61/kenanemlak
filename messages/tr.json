@@ -2,12 +2,13 @@
   "Navigation": {
     "home": "Ana Sayfa",
     "properties": "İlanlar",
+    "team": "Danışmanlar",
     "about": "Hakkımızda",
     "contact": "İletişim"
   },
   "Header": {
-    "phone": "+90 462 230 00 00",
-    "email": "info@kenankadioglu.com",
+    "phone": "0533 411 51 47",
+    "email": "61kenankadioglu61@gmail.com",
     "location": "Trabzon, Türkiye"
   },
   "Hero": {
@@ -60,6 +61,35 @@
         "solutions": "Hızlı ve Etkin Çözüm Üretme"
       },
       "moreButton": "Hakkımızda Daha Fazla"
+    },
+    "ctaTitle": "Hayalinizdeki Eve Ulaşın",
+    "ctaDescription": "Profesyonel ekibimizle birlikte, size en uygun gayrimenkulü bulmak için çalışalım. Hemen iletişime geçin!",
+    "ctaButtonContact": "İletişime Geçin",
+    "ctaButtonCall": "Hemen Arayın",
+    "testimonials": {
+      "title": "Müşteri Yorumları",
+      "items": {
+        "1": {
+          "name": "Ahmet Y.",
+          "comment": "Kenan Bey hayalimizdeki evi bulmamızda çok yardımcı oldu. Güvenilir ve profesyonel hizmet için teşekkürler.",
+          "role": "Ev Sahibi"
+        },
+        "2": {
+          "name": "Mehmet K.",
+          "comment": "Yatırım için aldığımız arsa konusunda bize çok doğru yönlendirmeler yaptı. Trabzon'da emlak konusunda tek adres.",
+          "role": "Yatırımcı"
+        },
+        "3": {
+          "name": "Ayşe D.",
+          "comment": "Evimizi satma sürecinde çok hızlı ve şeffaf bir süreç yönettiler. İlgi ve alakaları için teşekkür ederim.",
+          "role": "Satıcı"
+        },
+        "4": {
+          "name": "Fatma S.",
+          "comment": "Kiralık daire arayışımızda bize en uygun seçenekleri sundular. Çok memnun kaldık.",
+          "role": "Kiracı"
+        }
+      }
     }
   },
   "AboutPage": {
@@ -81,7 +111,30 @@
        "Doğru değerleme ve gerçek piyasa analizi",
        "Profesyonel danışmanlık ve satış sonrası destek",
        "Yüzlerce başarılı işlem ve müşteri memnuniyeti"
-    ]
+    ],
+    "experience": {
+      "years": "15 Yıllık Tecrübe",
+      "service": "Güvenilir Hizmet"
+    },
+    "mission": {
+      "title": "Misyonumuz",
+      "desc": "Müşterilerimizin hayallerindeki yaşam alanına ulaşmasını sağlamak ve yatırım süreçlerinde doğru kararlar almalarına yardımcı olmak. Güveni, şeffaflığı ve profesyonelliği her işimizin merkezine koymak."
+    },
+    "vision": {
+      "title": "Vizyonumuz",
+      "desc": "Trabzon'da ve Karadeniz bölgesinde gayrimenkul danışmanlığında lider ve örnek gösterilen bir marka olmak; teknolojiyi, yenilikçi çözümleri ve müşteri memnuniyetini temel alarak hizmet kalitesini sürekli yükseltmek."
+    },
+    "valuesTitle": "Değerlerimiz",
+    "valuesDesc": "Tüm faaliyetlerimizde benimsediğimiz temel değerlerimiz",
+    "cta": {
+      "title": "Sizinle Tanışmak İsteriz",
+      "desc": "Hayalinizdeki gayrimenkule ulaşmanız için buradayız. Hemen iletişime geçin!",
+      "phone": "Telefon",
+      "email": "E-posta",
+      "address": "Adres",
+      "formButton": "İletişim Formu",
+      "callButton": "Hemen Arayın"
+    }
   },
   "ContactPage": {
     "title": "İletişime Geçin",
@@ -105,7 +158,13 @@
        "message": "Mesajınız",
        "submit": "Gönder",
        "success": "Mesajınız başarıyla gönderildi!"
-    }
+    },
+    "mapTitle": "Harita",
+    "mapDescription": "Trabzon Haritası",
+    "mapIntegration": "Google Maps Entegrasyonu",
+    "ctaTitle": "Hemen Arayın!",
+    "ctaDescription": "Profesyonel ekibimizle birlikte, size en uygun gayrimenkulü bulmak için çalışalım. Telefonla hızlı iletişim kurun.",
+    "ctaButton": "0533 411 51 47"
   },
   "PropertiesPage": {
     "title": "Hayalinizdeki Yaşam Alanı",
@@ -123,14 +182,61 @@
        "priceAsc": "Fiyat (Artan)",
        "priceDesc": "Fiyat (Azalan)",
        "size": "Genişlik"
+    },
+    "cta": {
+      "title": "Aradığınızı Bulamadınız mı?",
+      "description": "Size özel gayrimenkul arayışınızda yardımcı olalım. Hemen iletişime geçin!",
+      "button": "İletişime Geçin",
+      "call": "Hemen Arayın"
     }
   },
+  "TeamPage": {
+    "title": "Profesyonel Ekibimiz",
+    "subtitle": "Deneyimli ve uzman kadromuzla gayrimenkul süreçlerinizde yanınızdayız.",
+    "viewProfile": "İncele",
+    "backToTeam": "EKİBE DÖN",
+    "call": "Ara",
+    "whatsapp": "WhatsApp",
+    "location": "Lokasyon",
+    "email": "E-posta",
+    "phone": "Telefon",
+    "about": "Hakkında"
+  },
   "Footer": {
-    "rights": "Tüm hakları saklıdır."
+    "rights": "Tüm hakları saklıdır.",
+    "quickLinks": "Hızlı Erişim",
+    "services": "Hizmetlerimiz",
+    "serviceList": {
+      "sale": "Satılık Gayrimenkul",
+      "rent": "Kiralık Gayrimenkul",
+      "valuation": "Gayrimenkul Değerleme",
+      "investment": "Yatırım Danışmanlığı",
+      "portfolio": "Portföy Yönetimi"
+    },
+    "contactInfo": "İletişim Bilgileri"
   },
   "LanguageSwitcher": {
     "tr": "Türkçe",
     "en": "English",
     "ar": "العربية"
+  },
+  "ChatWidget": {
+    "title": "Canlı Destek",
+    "subtitle": "Size nasıl yardımcı olabiliriz?",
+    "welcomeTitle": "Hoş Geldiniz",
+    "welcomeDesc": "Lütfen sohbete başlamak için formu doldurun.",
+    "namePlaceholder": "Adınız Soyadınız",
+    "emailPlaceholder": "E-posta Adresiniz",
+    "phonePlaceholder": "Telefon Numaranız",
+    "startChatButton": "Sohbeti Başlat",
+    "inputPlaceholder": "Mesajınızı yazın...",
+    "botName": "Kenan Emlak Asistanı",
+    "agentName": "Müşteri Temsilcisi",
+    "errorMessage": "Bir hata oluştu.",
+    "endChat": "Sohbeti Bitir",
+    "adminTyping": "yazıyor...",
+    "adminRole": "Yönetici",
+    "findBestHome": "Bana en uygun evi bul",
+    "viewDetails": "Detaylı İncele"
   }
 }

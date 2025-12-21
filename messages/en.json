@@ -2,12 +2,13 @@
   "Navigation": {
     "home": "Home",
     "properties": "Properties",
+    "team": "Agents",
     "about": "About Us",
     "contact": "Contact"
   },
   "Header": {
-    "phone": "+90 462 230 00 00",
-    "email": "info@kenankadioglu.com",
+    "phone": "0533 411 51 47",
+    "email": "61kenankadioglu61@gmail.com",
     "location": "Trabzon, Turkey"
   },
   "Hero": {
@@ -60,6 +61,35 @@
         "solutions": "Fast and Effective Solution Generation"
       },
       "moreButton": "More About Us"
+    },
+    "ctaTitle": "Reach Your Dream Home",
+    "ctaDescription": "Let's work together with our professional team to find the most suitable property for you. Contact us now!",
+    "ctaButtonContact": "Contact Us",
+    "ctaButtonCall": "Call Now",
+    "testimonials": {
+      "title": "Customer Reviews",
+      "items": {
+        "1": {
+          "name": "Ahmet Y.",
+          "comment": "Mr. Kenan was very helpful in finding our dream home. Thanks for the reliable and professional service.",
+          "role": "Homeowner"
+        },
+        "2": {
+          "name": "Mehmet K.",
+          "comment": "He guided us very correctly regarding the land we bought for investment. The only address for real estate in Trabzon.",
+          "role": "Investor"
+        },
+        "3": {
+          "name": "Ayşe D.",
+          "comment": "They managed a very fast and transparent process during the sale of our house. Thank you for your interest and concern.",
+          "role": "Seller"
+        },
+        "4": {
+          "name": "Fatma S.",
+          "comment": "They offered us the most suitable options in our search for a rental apartment. We were very satisfied.",
+          "role": "Tenant"
+        }
+      }
     }
   },
   "AboutPage": {
@@ -81,11 +111,34 @@
        "Accurate valuation and real market analysis",
        "Professional consultancy and after-sales support",
        "Hundreds of successful transactions and customer satisfaction"
-    ]
+    ],
+    "experience": {
+      "years": "15 Years Experience",
+      "service": "Trusted Service"
+    },
+    "mission": {
+      "title": "Our Mission",
+      "desc": "To ensure our customers reach their dream living space and help them make the right decisions in investment processes. To put trust, transparency and professionalism at the center of all our work."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "desc": "To be a leading and exemplary brand in real estate consultancy in Trabzon and the Black Sea region; to constantly increase service quality based on technology, innovative solutions and customer satisfaction."
+    },
+    "valuesTitle": "Our Values",
+    "valuesDesc": "Our core values that we adopt in all our activities",
+    "cta": {
+      "title": "We Would Like to Meet You",
+      "desc": "We are here to help you reach your dream real estate. Contact us now!",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "formButton": "Contact Form",
+      "callButton": "Call Now"
+    }
   },
   "ContactPage": {
     "title": "Contact Us",
-    "subtitle": "We are here to help you reach your dream real estate. Let us help you as soon as possible.",
+    "subtitle": "We are here to help you reach your dream property. Let us help you as soon as possible.",
     "infoTitle": "Contact Information",
     "labels": {
        "phone": "Phone",
@@ -98,14 +151,20 @@
     },
     "formTitle": "Quick Contact Form",
     "form": {
-       "name": "Your Name",
-       "email": "Your Email Address",
+       "name": "Full Name",
+       "email": "Email Address",
        "phone": "Phone Number",
        "subject": "Subject",
        "message": "Your Message",
-       "submit": "Send",
+       "submit": "Send Message",
        "success": "Your message has been sent successfully!"
-    }
+    },
+    "mapTitle": "Map",
+    "mapDescription": "Trabzon Map",
+    "mapIntegration": "Google Maps Integration",
+    "ctaTitle": "Call Now!",
+    "ctaDescription": "Let's work together with our professional team to find the most suitable property for you. Contact us quickly by phone.",
+    "ctaButton": "0533 411 51 47"
   },
   "PropertiesPage": {
     "title": "Your Dream Living Space",
@@ -123,14 +182,61 @@
        "priceAsc": "Price (Low to High)",
        "priceDesc": "Price (High to Low)",
        "size": "Size"
+    },
+    "cta": {
+      "title": "Couldn't Find What You Were Looking For?",
+      "description": "Let us help you with your custom real estate search. Contact us now!",
+      "button": "Contact Us",
+      "call": "Call Now"
     }
   },
+  "TeamPage": {
+    "title": "Our Professional Team",
+    "subtitle": "We are with you in your real estate processes with our experienced and expert staff.",
+    "viewProfile": "View Profile",
+    "backToTeam": "BACK TO TEAM",
+    "call": "Call",
+    "whatsapp": "WhatsApp",
+    "location": "Location",
+    "email": "Email",
+    "phone": "Phone",
+    "about": "About"
+  },
   "Footer": {
-    "rights": "All rights reserved."
+    "rights": "All rights reserved.",
+    "quickLinks": "Quick Links",
+    "services": "Our Services",
+    "serviceList": {
+      "sale": "Real Estate for Sale",
+      "rent": "Real Estate for Rent",
+      "valuation": "Real Estate Valuation",
+      "investment": "Investment Consultancy",
+      "portfolio": "Portfolio Management"
+    },
+    "contactInfo": "Contact Information"
   },
   "LanguageSwitcher": {
     "tr": "Türkçe",
     "en": "English",
     "ar": "العربية"
+  },
+  "ChatWidget": {
+    "title": "Live Support",
+    "subtitle": "How can we help you?",
+    "welcomeTitle": "Welcome",
+    "welcomeDesc": "Please fill out the form to start chatting.",
+    "namePlaceholder": "Your Name",
+    "emailPlaceholder": "Your Email",
+    "phonePlaceholder": "Your Phone",
+    "startChatButton": "Start Chat",
+    "inputPlaceholder": "Type your message...",
+    "botName": "Kenan Estate Assistant",
+    "agentName": "Support Agent",
+    "errorMessage": "An error occurred.",
+    "endChat": "End Chat",
+    "adminTyping": "typing...",
+    "adminRole": "Admin",
+    "findBestHome": "Find my perfect home",
+    "viewDetails": "View Details"
   }
 }

@@ -1,26 +1,37 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
-import { MapPin, Home, Bath, Square, ArrowLeft, Phone, Calendar, Check, Share2, Heart, Maximize2, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MapPin, Home, Bath, Square, ArrowLeft, Phone, Calendar, Check, Share2, Heart, Maximize2, X, ChevronLeft, ChevronRight, Edit } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { Property } from '@/types/property';
+import AppointmentModal from '@/components/AppointmentModal';
+import { fetchWithCache } from '@/utils/apiCache';
 
 export default function PropertyDetails() {
   const { id } = useParams();
-  const router = useRouter();
-  const [property, setProperty] = useState<any>(null);
+  const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [showLightbox, setShowLightbox] = useState(false);
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('adminToken');
+    if (token) {
+      setIsAdmin(true);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchProperty = async () => {
       try {
-        const res = await fetch(`/api/properties/${id}`);
-        if (res.ok) {
-          const data = await res.json();
+        const data = await fetchWithCache<Property>(`/api/properties/${id}`);
+        if (data) {
           setProperty(data);
         }
       } catch (error) {
@@ -106,16 +117,23 @@ export default function PropertyDetails() {
          className="bg-white/70 backdrop-blur-xl backdrop-saturate-150 border-b border-white/20 sticky top-0 z-50 shadow-sm transition-all duration-300"
        >
          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-           <Link href="/" className="flex items-center gap-3 text-slate-600 hover:text-slate-900 transition-colors group">
-             <div className="w-10 h-10 rounded-full bg-white/80 border border-slate-200 flex items-center justify-center shadow-sm group-hover:scale-105 group-hover:border-slate-300 transition-all duration-300">
-               <ArrowLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform duration-300" />
-             </div>
-             <span className="font-semibold text-sm tracking-wide hidden sm:block">GERİ DÖN</span>
-           </Link>
-           
-           <Link href="/" className="text-2xl font-bold tracking-tight text-slate-800 hover:opacity-80 transition-opacity">
-             Kenan<span className="text-primary-gold">Emlak</span>
-           </Link>
+            <div className="flex items-center gap-3">
+              <Link href="/" className="flex items-center gap-3 text-slate-600 hover:text-slate-900 transition-colors group">
+                <div className="w-10 h-10 rounded-full bg-white/80 border border-slate-200 flex items-center justify-center shadow-sm group-hover:scale-105 group-hover:border-slate-300 transition-all duration-300">
+                  <ArrowLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform duration-300" />
+                </div>
+                <span className="font-semibold text-sm tracking-wide hidden sm:block">GERİ DÖN</span>
+              </Link>
+              {isAdmin && (
+                <Link href={`/admin?tab=properties&edit=${property.id}`} className="w-10 h-10 rounded-full bg-white/80 border border-slate-200 flex items-center justify-center shadow-sm hover:scale-105 hover:border-primary-gold hover:bg-primary-gold/10 transition-all duration-300 group" title="İlanı Düzenle">
+                  <Edit className="w-5 h-5 text-slate-600 group-hover:text-primary-gold transition-colors duration-300" />
+                </Link>
+              )}
+            </div>
+            
+            <Link href="/" className="text-2xl font-bold tracking-tight text-slate-800 hover:opacity-80 transition-opacity">
+              Kenan<span className="text-primary-gold">Emlak</span>
+            </Link>
 
            <div className="flex gap-3">
              <button 
@@ -218,7 +236,7 @@ export default function PropertyDetails() {
                  variants={itemVariants}
                  className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x"
                >
-                 {property.photos.map((photo: any, index: number) => (
+                 {property.photos.map((photo, index) => (
                    <button
                      key={photo.id}
                      onClick={() => setSelectedImageIndex(index)}
@@ -228,7 +246,13 @@ export default function PropertyDetails() {
                          : 'opacity-70 hover:opacity-100 hover:scale-105'
                      }`}
                    >
-                     <img src={photo.url} alt={`Thumbnail ${index + 1}`} className="w-full h-full object-cover" />
+                     <Image 
+                       src={photo.url} 
+                       alt={`Thumbnail ${index + 1}`} 
+                       fill
+                       className="object-cover"
+                       sizes="96px"
+                     />
                      {selectedImageIndex === index && (
                        <div className="absolute inset-0 bg-primary-gold/20"></div>
                      )}
@@ -239,15 +263,26 @@ export default function PropertyDetails() {
 
              {/* Property Highlights Grid */}
              <motion.div 
-               variants={itemVariants}
-               className="grid grid-cols-2 md:grid-cols-4 gap-4"
-             >
-                {[
-                  { icon: Square, label: "Alan", value: `${property.area} m²` },
-                  { icon: Home, label: "Oda", value: property.rooms },
-                  { icon: Bath, label: "Banyo", value: property.bathrooms },
-                  { icon: Calendar, label: "Tarih", value: new Date(property.createdAt).toLocaleDateString('tr-TR') }
-                ].map((item, index) => (
+              variants={itemVariants}
+              className="grid grid-cols-2 md:grid-cols-4 gap-4"
+            >
+               {(property.category === 'Arsa' || property.category === 'Arazi' ? 
+                 // Land Highlights
+                 [
+                   { icon: Square, label: "Alan", value: property.area ? `${property.area} m²` : '-' },
+                   { icon: MapPin, label: "İmar", value: property.zoningStatus || '-' },
+                   { icon: Maximize2, label: "Ada/Parsel", value: property.block && property.parcel ? `${property.block}/${property.parcel}` : '-' },
+                   { icon: Calendar, label: "Tarih", value: new Date(property.createdAt).toLocaleDateString('tr-TR') }
+                 ]
+                : 
+                 // Residential/Commercial Highlights
+                 [
+                   { icon: Square, label: "Alan", value: property.area ? `${property.area} m²` : '-' },
+                   { icon: Home, label: property.category === 'İş Yeri' ? "Bölüm" : "Oda", value: property.rooms || '-' },
+                   { icon: Bath, label: "Banyo", value: property.bathrooms || '-' },
+                   { icon: Calendar, label: "Tarih", value: new Date(property.createdAt).toLocaleDateString('tr-TR') }
+                 ]
+               ).map((item, index) => (
                   <div key={index} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow group">
                     <div className="w-10 h-10 bg-primary-gold/10 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300">
                       <item.icon className="w-5 h-5 text-primary-gold" />
@@ -269,18 +304,34 @@ export default function PropertyDetails() {
                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
                  {[
                    { label: "İlan No", value: property.id.slice(-8).toUpperCase() },
-                   { label: "Oda Sayısı", value: property.rooms },
-                   { label: "Banyo Sayısı", value: property.bathrooms },
-                   { label: "Brüt Alan", value: `${property.area} m²` },
+                   { label: "Kategori", value: property.category },
+                   { label: "Oda Sayısı", value: property.rooms, hidden: property.category === 'Arsa' || property.category === 'Arazi' },
+                   { label: "Banyo Sayısı", value: property.bathrooms, hidden: property.category === 'Arsa' || property.category === 'Arazi' },
+                   { label: "Brüt Alan", value: property.area ? `${property.area} m²` : null },
                    { label: "Net Alan", value: property.areaNet ? `${property.areaNet} m²` : null },
-                   { label: "Bina Yaşı", value: property.buildingAge },
-                   { label: "Bulunduğu Kat", value: property.floorNumber },
-                   { label: "Kat Sayısı", value: property.totalFloors },
-                   { label: "Isıtma", value: property.heating },
-                   { label: "Mutfak", value: property.kitchen },
-                   { label: "Otopark", value: property.parking },
+                   { label: "Bina Yaşı", value: property.buildingAge, hidden: property.category === 'Arsa' || property.category === 'Arazi' },
+                   { label: "Bulunduğu Kat", value: property.floorNumber, hidden: property.category === 'Arsa' || property.category === 'Arazi' },
+                   { label: "Kat Sayısı", value: property.totalFloors, hidden: property.category === 'Arsa' || property.category === 'Arazi' },
+                   { label: "Isıtma", value: property.heating, hidden: property.category === 'Arsa' || property.category === 'Arazi' },
+                   { label: "Mutfak", value: property.kitchen, hidden: property.category === 'Arsa' || property.category === 'Arazi' },
+                   { label: "Otopark", value: property.parking, hidden: property.category === 'Arsa' || property.category === 'Arazi' },
                    { label: "Kullanım Durumu", value: property.usageStatus },
-                 ].filter(f => f.value !== null && f.value !== undefined).map((feature, idx) => (
+                   // Land specific fields
+                   { label: "İmar Durumu", value: property.zoningStatus, show: property.category === 'Arsa' || property.category === 'Arazi' },
+                   { label: "Ada", value: property.block, show: property.category === 'Arsa' || property.category === 'Arazi' },
+                   { label: "Parsel", value: property.parcel, show: property.category === 'Arsa' || property.category === 'Arazi' },
+                   { label: "Pafta", value: property.sheet, show: property.category === 'Arsa' || property.category === 'Arazi' },
+                   { label: "Kaks/Emsal", value: property.kaks, show: property.category === 'Arsa' || property.category === 'Arazi' },
+                   { label: "Gabari", value: property.gabari, show: property.category === 'Arsa' || property.category === 'Arazi' },
+                   { label: "Tapu Durumu", value: property.titleDeedStatus, show: property.category === 'Arsa' || property.category === 'Arazi' },
+                 ].filter(f => {
+                   if (f.hidden) return false;
+                   if (f.show === false) return false; // Explicitly check for false, undefined is ok if not hidden
+                   if (f.show === true) return f.value !== null && f.value !== undefined && f.value !== '';
+                   // For common fields, filter out empty values, but allow 0 if it makes sense (though for rooms 0 is usually invalid for display)
+                   if (f.value === '0' || f.value === 0) return false; 
+                   return f.value !== null && f.value !== undefined && f.value !== '';
+                 }).map((feature, idx) => (
                    <div key={idx} className="flex justify-between items-center border-b border-dashed border-gray-200 pb-2 hover:bg-gray-50 px-2 rounded transition-colors">
                      <span className="text-gray-500">{feature.label}</span>
                      <span className="font-semibold text-charcoal">{feature.value}</span>
@@ -295,7 +346,7 @@ export default function PropertyDetails() {
                    { key: 'elevator', label: 'Asansör' },
                    { key: 'furnished', label: 'Eşyalı' },
                    { key: 'inComplex', label: 'Site İçerisinde' },
-                 ].map((item) => property[item.key] && (
+                 ].map((item) => property[item.key as keyof typeof property] && (
                    <span key={item.key} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-green-50 text-green-700 font-medium text-sm border border-green-100">
                      <Check className="w-4 h-4" />
                      {item.label}
@@ -330,35 +381,38 @@ export default function PropertyDetails() {
                </div>
 
                <div className="space-y-4 mb-8">
-                 <button className="w-full bg-gradient-to-r from-primary-gold to-primary-gold-dark hover:from-primary-gold-dark hover:to-primary-gold text-white font-bold py-4 rounded-2xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-3">
-                   <Phone className="w-5 h-5" />
-                   <span>Hemen Ara</span>
-                 </button>
-                 <button className="w-full bg-white border-2 border-charcoal text-charcoal font-bold py-4 rounded-2xl transition-all hover:bg-charcoal hover:text-white flex items-center justify-center gap-3">
-                   <Calendar className="w-5 h-5" />
-                   <span>Randevu Al</span>
-                 </button>
-               </div>
+                <a href="tel:05334115147" className="w-full bg-gradient-to-r from-primary-gold to-primary-gold-dark hover:from-primary-gold-dark hover:to-primary-gold text-white font-bold py-4 rounded-2xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-3">
+                  <Phone className="w-5 h-5" />
+                  <span>Hemen Ara</span>
+                </a>
+                <button 
+                  onClick={() => setShowAppointmentModal(true)}
+                  className="w-full bg-white border-2 border-charcoal text-charcoal font-bold py-4 rounded-2xl transition-all hover:bg-charcoal hover:text-white flex items-center justify-center gap-3"
+                >
+                  <Calendar className="w-5 h-5" />
+                  <span>Randevu Al</span>
+                </button>
+              </div>
 
-               <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                 <div className="flex items-center gap-4 mb-4">
-                   <div className="w-14 h-14 bg-gradient-to-br from-charcoal to-gray-800 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-md ring-4 ring-white">
-                     K
-                   </div>
-                   <div>
-                     <div className="font-bold text-lg text-charcoal">Kenan Kadıoğlu</div>
-                     <div className="text-primary-gold text-sm font-medium">Profesyonel Danışman</div>
-                   </div>
-                 </div>
-                 <div className="flex gap-2">
-                   <button className="flex-1 bg-white border border-gray-200 py-2 rounded-xl text-sm font-medium hover:border-primary-gold hover:text-primary-gold transition-colors">
-                     Profili Gör
-                   </button>
-                   <button className="flex-1 bg-white border border-gray-200 py-2 rounded-xl text-sm font-medium hover:border-primary-gold hover:text-primary-gold transition-colors">
-                     Mesaj At
-                   </button>
-                 </div>
-               </div>
+              <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-14 h-14 bg-gradient-to-br from-charcoal to-gray-800 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-md ring-4 ring-white">
+                    K
+                  </div>
+                  <div>
+                    <div className="font-bold text-lg text-charcoal">Kenan Kadıoğlu</div>
+                    <div className="text-primary-gold text-sm font-medium">Profesyonel Danışman</div>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Link href="/team/kenan-kadioglu" className="flex-1 bg-white border border-gray-200 py-2 rounded-xl text-sm font-medium hover:border-primary-gold hover:text-primary-gold transition-colors flex items-center justify-center">
+                    Profili Gör
+                  </Link>
+                  <a href="https://wa.me/905334115147" target="_blank" rel="noopener noreferrer" className="flex-1 bg-white border border-gray-200 py-2 rounded-xl text-sm font-medium hover:border-primary-gold hover:text-primary-gold transition-colors flex items-center justify-center">
+                    Mesaj At
+                  </a>
+                </div>
+              </div>
              </motion.div>
            </div>
          </motion.div>
@@ -415,6 +469,12 @@ export default function PropertyDetails() {
            </motion.div>
          )}
        </AnimatePresence>
+      <AppointmentModal
+        isOpen={showAppointmentModal}
+        onClose={() => setShowAppointmentModal(false)}
+        propertyTitle={property.title}
+        propertyId={property.id}
+      />
     </div>
   );
 }

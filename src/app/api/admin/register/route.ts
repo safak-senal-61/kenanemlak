@@ -1,7 +1,56 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
-import { verifyInvitationToken } from '@/lib/jwt'
+
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const token = searchParams.get('token')
+
+    if (!token) {
+      return NextResponse.json(
+        { error: 'Token gerekli' },
+        { status: 400 }
+      )
+    }
+
+    const invitation = await prisma.adminInvitation.findUnique({
+      where: { token }
+    })
+
+    if (!invitation) {
+      return NextResponse.json(
+        { error: 'Geçersiz davet bağlantısı' },
+        { status: 404 }
+      )
+    }
+
+    if (invitation.isUsed) {
+      return NextResponse.json(
+        { error: 'Bu davet zaten kullanılmış' },
+        { status: 400 }
+      )
+    }
+
+    if (invitation.expiresAt < new Date()) {
+      return NextResponse.json(
+        { error: 'Bu davetin süresi dolmuş' },
+        { status: 400 }
+      )
+    }
+
+    return NextResponse.json({
+      email: invitation.email,
+      role: invitation.role
+    })
+  } catch (error) {
+    console.error('Verify token error:', error)
+    return NextResponse.json(
+      { error: 'Davet kontrol edilirken bir hata oluştu' },
+      { status: 500 }
+    )
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,7 +71,7 @@ export async function POST(request: NextRequest) {
     }
 
     let userEmail = email
-    let userRole = 'ADMIN'
+    let userRole = 'admin'
 
     // Senaryo 1: Davet token'ı ile kayıt
     if (token) {

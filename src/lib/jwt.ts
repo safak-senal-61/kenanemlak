@@ -15,7 +15,7 @@ export function generateToken(payload: JWTPayload): string {
 export function verifyToken(token: string): JWTPayload | null {
   try {
     return jwt.verify(token, JWT_SECRET) as JWTPayload
-  } catch (error) {
+  } catch {
     return null
   }
 }
@@ -26,9 +26,9 @@ export function generateInvitationToken(): string {
 
 export function verifyInvitationToken(token: string): boolean {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as any
+    const decoded = jwt.verify(token, JWT_SECRET) as { type: string }
     return decoded.type === 'invitation'
-  } catch (error) {
+  } catch {
     return false
   }
 }

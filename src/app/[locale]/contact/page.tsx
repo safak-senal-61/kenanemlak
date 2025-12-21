@@ -2,13 +2,15 @@
 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
-import { Phone, Mail, MapPin, Clock, Send, User, MessageSquare } from 'lucide-react'
+import { Phone, Mail, MapPin, Clock, Send, User, MessageSquare, Facebook, Instagram, Twitter } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 export default function ContactPage() {
   const t = useTranslations('ContactPage')
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -22,11 +24,37 @@ export default function ContactPage() {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Form submitted:', formData)
-    // Here you would typically send the data to your API
-    alert(t('form.success'))
+    setIsSubmitting(true)
+    
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to send message')
+      }
+
+      alert(t('form.success'))
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        subject: '',
+        message: ''
+      })
+    } catch (error) {
+      console.error('Error sending message:', error)
+      alert(t('form.error') || 'Mesaj gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -75,7 +103,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">{t('labels.phone')}</h3>
-                    <p className="text-gray-600">+90 462 230 00 00</p>
+                    <p className="text-gray-600">0533 411 51 47</p>
                     <p className="text-sm text-gray-500">{t('labels.hoursValue')}</p>
                   </div>
                 </div>
@@ -86,7 +114,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">{t('labels.email')}</h3>
-                    <p className="text-gray-600">info@kenankadioglu.com</p>
+                    <p className="text-gray-600">61kenankadioglu61@gmail.com</p>
                     <p className="text-sm text-gray-500">{t('labels.support')}</p>
                   </div>
                 </div>
@@ -113,15 +141,36 @@ export default function ContactPage() {
                 </div>
               </div>
               
-              {/* Map */}
-              <div className="mt-8">
-                <h3 className="font-semibold text-gray-900 mb-4">Harita</h3>
-                <div className="bg-gray-200 h-64 rounded-lg flex items-center justify-center">
-                  <div className="text-center text-gray-500">
-                    <MapPin className="w-12 h-12 mx-auto mb-2" />
-                    <p>Trabzon Haritası</p>
-                    <p className="text-sm">Google Maps Entegrasyonu</p>
+              {/* Social Media & Logo */}
+              <div className="mt-8 bg-gray-50 p-8 rounded-2xl border border-gray-100 text-center">
+                <div className="mb-6 flex justify-center">
+                  <div className="inline-block rounded-xl overflow-hidden">
+                    <Image
+                      src="/logo.png"
+                      alt="Kenan Kadıoğlu"
+                      width={300}
+                      height={100}
+                      className="h-16 w-auto object-contain rounded-xl"
+                    />
                   </div>
+                </div>
+
+                <div className="flex flex-wrap justify-center gap-4 mt-6">
+                   <a href="https://shbd.io/s/kyfllczE" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 bg-[#F9BC06] text-black px-6 py-3 rounded-xl hover:bg-[#e5ac05] transition-all shadow-md hover:shadow-lg font-bold">
+                      <span>Sahibinden.com</span>
+                   </a>
+                   
+                   <a href="https://www.facebook.com/share/17Yg5oyP98/" target="_blank" rel="noopener noreferrer" className="p-3 bg-[#1877F2] text-white rounded-xl hover:bg-[#166fe5] transition-all shadow-md hover:shadow-lg">
+                      <Facebook size={24} />
+                   </a>
+
+                   <a href="https://www.instagram.com/trabzonrealestatebroker?utm_source=qr&igsh=MTJkcmp3dTdqMnNycQ==" target="_blank" rel="noopener noreferrer" className="p-3 bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white rounded-xl hover:opacity-90 transition-all shadow-md hover:shadow-lg">
+                      <Instagram size={24} />
+                   </a>
+
+                   <a href="https://x.com/6KENANKADIOGLU1?t=MiK8QArC0sV_cTCNmZJmjw&s=09" target="_blank" rel="noopener noreferrer" className="p-3 bg-black text-white rounded-xl hover:bg-gray-800 transition-all shadow-md hover:shadow-lg">
+                      <Twitter size={24} />
+                   </a>
                 </div>
               </div>
             </motion.div>
@@ -234,10 +283,11 @@ export default function ContactPage() {
 
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2"
+                  disabled={isSubmitting}
+                  className="w-full bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  <Send className="w-5 h-5" />
-                  <span>{t('form.submit')}</span>
+                  <Send className={`w-5 h-5 ${isSubmitting ? 'animate-pulse' : ''}`} />
+                  <span>{isSubmitting ? 'Gönderiliyor...' : t('form.submit')}</span>
                 </button>
               </form>
             </motion.div>
@@ -255,17 +305,16 @@ export default function ContactPage() {
             transition={{ duration: 0.8 }}
           >
             <h2 className="text-4xl font-bold mb-6">
-              Hemen Arayın!
+              {t('ctaTitle')}
             </h2>
             <p className="text-xl text-gray-300 mb-8">
-              Profesyonel ekibimizle birlikte, size en uygun gayrimenkulü bulmak için 
-              çalışalım. Telefonla hızlı iletişim kurun.
+              {t('ctaDescription')}
             </p>
             <a
-              href="tel:+904622300000"
+              href="tel:+905334115147"
               className="inline-block bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black px-8 py-4 rounded-lg font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl"
             >
-              +90 462 230 00 00
+              0533 411 51 47
             </a>
           </motion.div>
         </div>

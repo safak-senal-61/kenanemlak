@@ -1,9 +1,15 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useRouter } from 'next/navigation';
-import PropertyForm from './admin/PropertyForm';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { motion } from 'framer-motion';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
+import { clearCache } from '@/utils/apiCache';
+import { Property } from '../types/property';
+import PropertyForm, { PropertyFormData } from './admin/PropertyForm';
+import SubscribersList from './admin/SubscribersList';
+import AdminManagement from './admin/AdminManagement';
+import TeamManagement from './admin/TeamManagement';
 import { 
   Plus, 
   Home, 
@@ -15,14 +21,12 @@ import {
   Bell,
   ChevronRight,
   LayoutDashboard,
-  Mail,
   Trash2,
+  Edit,
   MapPin,
-  Minus,
-  Upload,
-  X,
   MessageSquare,
-  Send
+  Send,
+  Shield
 } from 'lucide-react';
 
 // Chat Types
@@ -40,15 +44,23 @@ interface ChatSession {
   updatedAt: string;
 }
 
+// Admin User Type
+interface AdminUser {
+  email: string;
+  role: string;
+}
+
 // Chat Component for Admin
 const MessagesPanel = () => {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
-  const [selectedSession, setSelectedSession] = useState<ChatSession | null>(null);
+  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const [reply, setReply] = useState('');
-  const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const fetchSessions = async () => {
+  const selectedSession = sessions.find(s => s.id === selectedSessionId) || null;
+
+  const fetchSessions = useCallback(async () => {
     try {
       const token = localStorage.getItem('adminToken');
       const res = await fetch('/api/admin/chats', {
@@ -61,29 +73,47 @@ const MessagesPanel = () => {
     } catch (error) {
       console.error(error);
     }
-  };
-
-  useEffect(() => {
-    fetchSessions();
-    const interval = setInterval(fetchSessions, 10000); // Poll every 10s
-    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    if (selectedSession) {
-      // Update selected session with new data if available
-      const updated = sessions.find(s => s.id === selectedSession.id);
-      if (updated) setSelectedSession(updated);
-      
+    const timer = setTimeout(() => {
+      fetchSessions();
+    }, 0);
+    const interval = setInterval(fetchSessions, 10000); // Poll every 10s
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
+  }, [fetchSessions]);
+
+  useEffect(() => {
+    if (selectedSessionId) {
       setTimeout(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
     }
-  }, [sessions, selectedSession?.id]);
+  }, [selectedSessionId, selectedSession?.messages.length]);
+
+  const updateTypingStatus = async (status: boolean) => {
+    if (!selectedSessionId) return;
+    try {
+        await fetch('/api/chat/typing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId: selectedSessionId, isTyping: status })
+        });
+    } catch (e) {
+        console.error(e);
+    }
+  };
 
   const handleSendReply = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!reply.trim() || !selectedSession) return;
+    if (!reply.trim() || !selectedSessionId) return;
+
+    // Stop typing indicator
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    updateTypingStatus(false);
 
     const token = localStorage.getItem('adminToken');
     try {
@@ -94,7 +124,7 @@ const MessagesPanel = () => {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          sessionId: selectedSession.id,
+          sessionId: selectedSessionId,
           message: reply
         })
       });
@@ -124,9 +154,9 @@ const MessagesPanel = () => {
             sessions.map(session => (
               <div
                 key={session.id}
-                onClick={() => setSelectedSession(session)}
+                onClick={() => setSelectedSessionId(session.id)}
                 className={`p-4 border-b border-white/5 cursor-pointer hover:bg-white/5 transition-colors ${
-                  selectedSession?.id === session.id ? 'bg-white/5 border-l-2 border-l-primary-gold' : ''
+                  selectedSessionId === session.id ? 'bg-white/5 border-l-2 border-l-primary-gold' : ''
                 }`}
               >
                 <div className="flex justify-between items-start mb-1">
@@ -216,9 +246,19 @@ const MessagesPanel = () => {
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('properties');
-  const [admin, setAdmin] = useState<any>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'properties');
+  const [admin, setAdmin] = useState<AdminUser | null>(null);
+  const [isSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab && tab !== activeTab) {
+      setTimeout(() => {
+        setActiveTab(tab);
+      }, 0);
+    }
+  }, [searchParams, activeTab]);
 
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
@@ -229,7 +269,13 @@ export default function AdminDashboard() {
 
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      setAdmin({ email: payload.email });
+      // Avoid synchronous state update in effect
+      setTimeout(() => {
+        setAdmin({ 
+          email: payload.email,
+          role: payload.role || 'admin' // Default to admin if not present
+        });
+      }, 0);
     } catch (error) {
       console.error('Token decode error:', error);
       router.push('/admin/login');
@@ -241,31 +287,42 @@ export default function AdminDashboard() {
     router.push('/admin/login');
   };
 
-  const menuItems = [
-    { id: 'properties', label: 'Emlaklar', icon: Building, description: 'İlanları Yönet' },
-    { id: 'add-property', label: 'Emlak Ekle', icon: Plus, description: 'Yeni İlan Oluştur' },
-    { id: 'messages', label: 'Mesajlar', icon: MessageSquare, description: 'Canlı Destek' },
-    { id: 'admins', label: 'Adminler', icon: Users, description: 'Ekip Yönetimi' },
-    { id: 'settings', label: 'Ayarlar', icon: Settings, description: 'Sistem Ayarları' },
+  const allMenuItems = [
+    { id: 'properties', label: 'Emlaklar', icon: Building, description: 'İlanları Yönet', roles: ['admin', 'editor'] },
+    { id: 'add-property', label: 'Emlak Ekle', icon: Plus, description: 'Yeni İlan Oluştur', roles: ['admin', 'editor'] },
+    { id: 'messages', label: 'Mesajlar', icon: MessageSquare, description: 'Canlı Destek', roles: ['admin'] },
+    { id: 'subscribers', label: 'Aboneler', icon: Bell, description: 'Bülten Aboneleri', roles: ['admin'] },
+    { id: 'team', label: 'Danışmanlar', icon: Users, description: 'Ekip Üyeleri', roles: ['admin'] },
+    { id: 'admins', label: 'Yöneticiler', icon: Shield, description: 'Sistem Yöneticileri', roles: ['admin'] },
+    { id: 'settings', label: 'Ayarlar', icon: Settings, description: 'Sistem Ayarları', roles: ['admin'] },
   ];
+
+  const menuItems = admin 
+    ? allMenuItems.filter(item => item.roles.includes(admin.role))
+    : [];
 
   const renderContent = () => {
     switch (activeTab) {
       case 'properties':
-        return <PropertiesList />;
+        return <PropertiesList editId={searchParams?.get('edit')} />;
       case 'add-property':
         return <PropertyForm 
           onCancel={() => setActiveTab('properties')} 
           onSuccess={() => setActiveTab('properties')} 
         />;
       case 'messages':
-        return <MessagesPanel />;
+        return admin?.role === 'admin' ? <MessagesPanel /> : null;
+      case 'subscribers':
+        return admin?.role === 'admin' ? <SubscribersList /> : null;
+      case 'team':
+        return admin?.role === 'admin' ? <TeamManagement /> : null;
       case 'admins':
-        return <AdminList />;
+        return admin?.role === 'admin' ? <AdminManagement /> : null;
       case 'settings':
-        return <SettingsPanel />;
+        return admin?.role === 'admin' ? <SettingsPanel /> : null;
       default:
-        return <PropertiesList />;
+        // Use a wrapper component or handle null safely if needed
+        return <PropertiesList editId={searchParams?.get('edit')} />;
     }
   };
 
@@ -408,9 +465,10 @@ export default function AdminDashboard() {
   );
 }
 
-function PropertiesList() {
+function PropertiesList({ editId }: { editId?: string | null }) {
   const [showAddForm, setShowAddForm] = useState(false);
-  const [properties, setProperties] = useState<any[]>([]);
+  const [editingData, setEditingData] = useState<PropertyFormData | null>(null);
+  const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchProperties = async () => {
@@ -428,12 +486,70 @@ function PropertiesList() {
     }
   };
 
+  const handleEdit = (property: Property) => {
+    const formattedData = {
+      title: property.title,
+      type: property.type,
+      category: property.category || '',
+      subCategory: property.subCategory || '',
+      price: property.price.toString(),
+      location: property.location,
+      description: property.description || '',
+      features: {
+        rooms: property.rooms?.toString() || '',
+        bathrooms: property.bathrooms?.toString() || '',
+        area: property.area?.toString() || '',
+        areaNet: property.areaNet?.toString() || '',
+        floor: property.floorNumber?.toString() || '',
+        totalFloors: property.totalFloors?.toString() || '',
+        buildingAge: property.buildingAge?.toString() || '',
+        heating: property.heating || '',
+        kitchen: property.kitchen || '',
+        parking: property.parking || '',
+        usageStatus: property.usageStatus || '',
+        zoningStatus: property.zoningStatus || '',
+        block: property.block || '',
+        parcel: property.parcel || '',
+        sheet: property.sheet || '',
+        kaks: property.kaks || '',
+        gabari: property.gabari || '',
+        titleDeedStatus: property.titleDeedStatus || '',
+        furnished: property.furnished || false,
+        balcony: property.balcony || false,
+        elevator: property.elevator || false,
+        inComplex: property.inComplex || false,
+        featured: property.featured || false,
+        creditSuitable: property.credit || false,
+        swap: property.swap || false,
+      },
+      photos: property.photos || [],
+      id: property.id // Keep ID for reference
+    };
+    setEditingData(formattedData);
+  };
+
+  useEffect(() => {
+    if (editId && properties.length > 0 && !editingData) {
+      const property = properties.find(p => p.id === editId);
+      if (property) {
+        handleEdit(property);
+        // Clear the URL param without reloading to avoid re-triggering or stuck state
+        window.history.replaceState(null, '', '/admin');
+      }
+    }
+  }, [editId, properties, editingData]);
+
+  useEffect(() => {
+    fetchProperties();
+  }, []);
+
   const handleDelete = async (id: string) => {
     if (!confirm('Bu ilanı silmek istediğinize emin misiniz?')) return;
     
     try {
       const res = await fetch(`/api/properties/${id}`, { method: 'DELETE' });
       if (res.ok) {
+        clearCache('/api/properties');
         fetchProperties();
       } else {
         const data = await res.json();
@@ -451,6 +567,16 @@ function PropertiesList() {
 
   if (showAddForm) {
     return <PropertyForm onCancel={() => setShowAddForm(false)} onSuccess={() => { setShowAddForm(false); fetchProperties(); }} />;
+  }
+
+  if (editingData) {
+    return <PropertyForm 
+      initialData={editingData} 
+      isEditMode={true}
+      propertyId={editingData.id}
+      onCancel={() => setEditingData(null)} 
+      onSuccess={() => { setEditingData(null); fetchProperties(); }} 
+    />;
   }
 
   return (
@@ -529,7 +655,13 @@ function PropertiesList() {
             >
               <div className="relative h-48 bg-white/5">
                 {property.photos?.[0]?.url ? (
-                  <img src={property.photos[0].url} alt={property.title} className="w-full h-full object-cover" />
+                  <Image 
+                    src={property.photos[0].url} 
+                    alt={property.title} 
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <Building className="w-12 h-12 text-white/10" />
@@ -559,6 +691,13 @@ function PropertiesList() {
                   <div className="flex items-center gap-3">
                     <span className="text-white/40 text-sm">{property.category}</span>
                     <button 
+                      onClick={() => handleEdit(property)}
+                      className="p-2 hover:bg-yellow-500/10 text-white/40 hover:text-yellow-400 rounded-lg transition-colors"
+                      title="Düzenle"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button 
                       onClick={() => handleDelete(property.id)}
                       className="p-2 hover:bg-red-500/10 text-white/40 hover:text-red-400 rounded-lg transition-colors"
                       title="Sil"
@@ -572,240 +711,6 @@ function PropertiesList() {
           ))}
         </div>
       )}
-    </div>
-  );
-}
-
-function AdminList() {
-  const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteLoading, setInviteLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  
-  const [admins, setAdmins] = useState<any[]>([]);
-  const [loadingAdmins, setLoadingAdmins] = useState(true);
-
-  const fetchAdmins = async () => {
-    try {
-      const token = localStorage.getItem('adminToken');
-      const res = await fetch('/api/admin/list', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setAdmins(data);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoadingAdmins(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAdmins();
-  }, []);
-
-  const handleInvite = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setInviteLoading(true);
-    setError('');
-    setSuccess('');
-
-    try {
-      const token = localStorage.getItem('adminToken');
-      const response = await fetch('/api/admin/invite', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ email: inviteEmail }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Davet gönderilemedi');
-      }
-
-      setSuccess('Davet başarıyla gönderildi');
-      setInviteEmail('');
-      fetchAdmins();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Bir hata oluştu');
-    } finally {
-      setInviteLoading(false);
-    }
-  };
-
-  const handleDeleteAdmin = async (id: string) => {
-    if (!confirm('Bu yöneticiyi silmek istediğinize emin misiniz?')) return;
-
-    try {
-      const token = localStorage.getItem('adminToken');
-      const res = await fetch(`/api/admin/list?id=${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-
-      if (res.ok) {
-        fetchAdmins();
-      } else {
-        const data = await res.json();
-        alert(data.error || 'Silme işlemi başarısız');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Bir hata oluştu');
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold text-white">Admin Yönetimi</h2>
-          <p className="text-white/40 text-sm mt-1">Yönetici hesaplarını ve davetleri buradan yönetin.</p>
-        </div>
-      </div>
-
-      <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-8">
-        <div className="max-w-2xl">
-          <h3 className="text-lg font-semibold text-white mb-2">Yeni Admin Davet Et</h3>
-          <p className="text-white/40 text-sm mb-6">
-            Yeni bir yönetici eklemek için e-posta adresini girin. Kişiye özel bir kayıt bağlantısı gönderilecektir.
-          </p>
-          
-          <form onSubmit={handleInvite} className="space-y-4">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1 relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within:text-primary-gold transition-colors" />
-                <input
-                  type="email"
-                  value={inviteEmail}
-                  onChange={(e) => setInviteEmail(e.target.value)}
-                  placeholder="ornek@email.com"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder-white/20 focus:outline-none focus:border-primary-gold/50 focus:bg-white/[0.07] transition-all"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={inviteLoading}
-                className="bg-primary-gold text-white px-8 py-3.5 rounded-xl hover:bg-primary-gold-dark transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-medium shadow-lg shadow-primary-gold/20"
-              >
-                {inviteLoading ? (
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <Users className="w-5 h-5" />
-                    <span>Davet Gönder</span>
-                  </>
-                )}
-              </button>
-            </div>
-            
-            <AnimatePresence mode="wait">
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm flex items-center gap-2"
-                >
-                  <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                  {error}
-                </motion.div>
-              )}
-              
-              {success && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="p-4 bg-green-500/10 border border-green-500/20 text-green-400 rounded-xl text-sm flex items-center gap-2"
-                >
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                  {success}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </form>
-        </div>
-      </div>
-
-      <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden">
-        <div className="p-6 border-b border-white/5">
-          <h3 className="font-semibold text-white">Mevcut Adminler</h3>
-        </div>
-        {loadingAdmins ? (
-          <div className="p-12 text-center">
-            <div className="w-8 h-8 border-2 border-primary-gold border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-white/30">Admin listesi yükleniyor...</p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-white/5">
-                <tr>
-                  <th className="text-left py-4 px-6 text-sm font-medium text-white/40">Admin</th>
-                  <th className="text-left py-4 px-6 text-sm font-medium text-white/40">Rol</th>
-                  <th className="text-left py-4 px-6 text-sm font-medium text-white/40">Durum</th>
-                  <th className="text-left py-4 px-6 text-sm font-medium text-white/40">Kayıt Tarihi</th>
-                  <th className="text-right py-4 px-6 text-sm font-medium text-white/40">İşlemler</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {admins.map((admin) => (
-                  <tr key={admin.id} className="hover:bg-white/[0.02] transition-colors">
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white/60">
-                          {admin.email[0].toUpperCase()}
-                        </div>
-                        <div>
-                          <div className="font-medium text-white">{admin.name || 'İsimsiz'}</div>
-                          <div className="text-sm text-white/40">{admin.email}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-4 px-6">
-                      <span className="px-2 py-1 rounded-lg bg-primary-gold/10 text-primary-gold text-xs font-medium uppercase">
-                        {admin.role}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6">
-                      <span className={`px-2 py-1 rounded-lg text-xs font-medium ${
-                        admin.isActive ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'
-                      }`}>
-                        {admin.isActive ? 'Aktif' : 'Pasif'}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6 text-sm text-white/40">
-                      {new Date(admin.createdAt).toLocaleDateString('tr-TR')}
-                    </td>
-                    <td className="py-4 px-6 text-right">
-                      <button
-                        onClick={() => handleDeleteAdmin(admin.id)}
-                        className="p-2 hover:bg-red-500/10 text-white/40 hover:text-red-400 rounded-lg transition-colors"
-                        title="Sil"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {admins.length === 0 && (
-              <div className="p-12 text-center text-white/30">
-                Henüz başka admin bulunmuyor.
-              </div>
-            )}
-          </div>
-        )}
-      </div>
     </div>
   );
 }
@@ -843,7 +748,7 @@ function SettingsPanel() {
       if (!res.ok) {
         setSettings({ ...settings, maintenanceMode: !newState }); // Revert
       }
-    } catch (err) {
+    } catch {
       setSettings({ ...settings, maintenanceMode: !newState }); // Revert
     }
   };

@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { Link } from '@/i18n/routing'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Phone, Mail, MapPin, Home, Building, User, MessageCircle, Bell } from 'lucide-react'
+import { Menu, X, Phone, Mail, MapPin, Home, Building, User, MessageCircle, Bell, Users } from 'lucide-react'
 import Logo from '@/components/Logo'
 import SubscriptionModal from './SubscriptionModal'
 import { useTranslations } from 'next-intl'
@@ -19,6 +20,7 @@ export default function Header() {
   const navigation = [
     { name: t('home'), href: '/', icon: Home },
     { name: t('properties'), href: '/properties', icon: Building },
+    { name: t('team'), href: '/team', icon: Users },
     { name: t('about'), href: '/about', icon: User },
     { name: t('contact'), href: '/contact', icon: MessageCircle },
   ]
@@ -58,7 +60,7 @@ export default function Header() {
   return (
     <>
       {/* Top Bar - Hidden on mobile */}
-      <div className="hidden lg:block bg-charcoal text-white py-3">
+      <div className="hidden lg:block bg-charcoal text-white py-3 relative z-[100]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center space-x-6">
@@ -196,14 +198,15 @@ export default function Header() {
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-primary-gold/20 bg-white">
                   <div className="flex items-center space-x-3">
-                    <div className="bg-gradient-to-br from-primary-gold to-primary-gold-dark p-2 rounded-lg">
-                      <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
-                        <span className="bg-gradient-to-r from-primary-gold to-primary-gold-dark bg-clip-text text-transparent font-bold">
-                          KK
-                        </span>
-                      </div>
+                    <div className="rounded-lg overflow-hidden">
+                      <Image
+                        src="/logo.png"
+                        alt="Kenan Kadıoğlu"
+                        width={120}
+                        height={40}
+                        className="h-8 w-auto object-contain rounded-lg"
+                      />
                     </div>
-                    <h2 className="text-lg font-bold text-charcoal">Menü</h2>
                   </div>
                   <motion.button
                     onClick={() => setMobileMenuOpen(false)}
@@ -244,13 +247,13 @@ export default function Header() {
                 {/* Footer Info */}
                 <div className="p-6 bg-white border-t border-gray-100">
                   <div className="space-y-4">
-                    <a href="tel:+904622300000" className="flex items-center space-x-3 text-gray-600 hover:text-primary-gold transition-colors">
+                    <a href="tel:+905334115147" className="flex items-center space-x-3 text-gray-600 hover:text-primary-gold transition-colors">
                       <Phone className="w-5 h-5" />
-                      <span>{tHeader('phone')}</span>
+                      <span>0533 411 51 47</span>
                     </a>
-                    <a href="mailto:info@kenankadioglu.com" className="flex items-center space-x-3 text-gray-600 hover:text-primary-gold transition-colors">
+                    <a href="mailto:61kenankadioglu61@gmail.com" className="flex items-center space-x-3 text-gray-600 hover:text-primary-gold transition-colors">
                       <Mail className="w-5 h-5" />
-                      <span>{tHeader('email')}</span>
+                      <span>61kenankadioglu61@gmail.com</span>
                     </a>
                     <div className="flex items-center space-x-3 text-gray-600">
                       <MapPin className="w-5 h-5" />

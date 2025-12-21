@@ -43,9 +43,9 @@ export default function SubscriptionModal({ isOpen, onClose }: SubscriptionModal
         setFormData({ name: '', email: '', phone: '' })
         setMessage('')
       }, 3000)
-    } catch (error: any) {
+    } catch (error) {
       setStatus('error')
-      setMessage(error.message)
+      setMessage(error instanceof Error ? error.message : 'Bir hata oluştu')
     }
   }
 

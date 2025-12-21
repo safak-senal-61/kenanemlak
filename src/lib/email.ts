@@ -98,28 +98,82 @@ export function generateNewPropertyEmail(userName: string, propertyTitle: string
           <p>Yeni Fırsat Alarmı</p>
         </div>
         <div class="content">
-          <h2>Merhaba ${userName},</h2>
-          <p>İlginizi çekebilecek yeni bir portföyümüz var.</p>
+          <h2>Merhaba,</h2>
+          <p>İlgilenebileceğinizi düşündüğümüz yeni bir ilan portföyümüze eklendi.</p>
           
           <div class="property-details">
-            <h3 style="margin-top: 0; color: #B8860B;">${propertyTitle}</h3>
-            <p><strong>Konum:</strong> ${propertyLocation}</p>
+            <h3 style="margin-top: 0; color: #D4AF37;">${propertyTitle}</h3>
             <p><strong>Fiyat:</strong> ${propertyPrice}</p>
+            <p><strong>Konum:</strong> ${propertyLocation}</p>
           </div>
 
-          <p>Detaylı bilgi ve fotoğraflar için ilanı inceleyebilirsiniz:</p>
+          <p>Daha detaylı bilgi almak ve fotoğrafları incelemek için aşağıdaki butona tıklayın:</p>
           
           <div style="text-align: center;">
             <a href="${propertyUrl}" class="button">İlanı İncele</a>
           </div>
           
-          <p>Saygılarımızla,</p>
-          <p>Kenan Kadıoğlu Gayrimenkul Ekibi</p>
+          <p>İyi günler dileriz.</p>
         </div>
         <div class="footer">
           <p>Kenan Kadıoğlu Gayrimenkul Danışmanlığı</p>
           <p>Trabzon, Türkiye</p>
-          <p><small>Bu e-postayı yeni ilanlardan haberdar olmak için abone olduğunuz için alıyorsunuz.</small></p>
+          <p><a href="${process.env.SITE_URL || 'http://localhost:3000'}/unsubscribe" style="color: #999;">Abonelikten Ayrıl</a></p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `
+}
+
+export function generateContactFormEmail(data: { name: string; email: string; phone: string; subject: string; message: string }): string {
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <title>Yeni İletişim Formu Mesajı</title>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #D4AF37, #B8860B); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
+        .field { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .label { font-weight: bold; color: #D4AF37; display: block; margin-bottom: 5px; }
+        .value { color: #333; }
+        .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Kenan Kadıoğlu Gayrimenkul</h1>
+          <p>Yeni İletişim Formu Mesajı</p>
+        </div>
+        <div class="content">
+          <div class="field">
+            <span class="label">Ad Soyad:</span>
+            <span class="value">${data.name}</span>
+          </div>
+          <div class="field">
+            <span class="label">E-posta:</span>
+            <span class="value">${data.email}</span>
+          </div>
+          <div class="field">
+            <span class="label">Telefon:</span>
+            <span class="value">${data.phone || 'Belirtilmedi'}</span>
+          </div>
+          <div class="field">
+            <span class="label">Konu:</span>
+            <span class="value">${data.subject || 'Belirtilmedi'}</span>
+          </div>
+          <div class="field">
+            <span class="label">Mesaj:</span>
+            <div class="value" style="white-space: pre-wrap;">${data.message}</div>
+          </div>
+        </div>
+        <div class="footer">
+          <p>Bu mesaj web sitesi iletişim formundan gönderilmiştir.</p>
         </div>
       </div>
     </body>

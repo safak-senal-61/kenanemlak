@@ -2,7 +2,8 @@
 
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Upload, X, Loader2 } from 'lucide-react';
+import Image from 'next/image';
 
 interface PhotoUploadProps {
   propertyId: string;
@@ -15,40 +16,7 @@ export default function PhotoUpload({ propertyId, onUploadComplete, existingPhot
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  }, []);
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-  }, []);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    
-    const files = Array.from(e.dataTransfer.files).filter(file => 
-      file.type.startsWith('image/')
-    );
-    
-    if (files.length > 0) {
-      uploadFiles(files);
-    }
-  }, [propertyId]);
-
-  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []).filter(file => 
-      file.type.startsWith('image/')
-    );
-    
-    if (files.length > 0) {
-      uploadFiles(files);
-    }
-  }, [propertyId]);
-
-  const uploadFiles = async (files: File[]) => {
+  const uploadFiles = useCallback(async (files: File[]) => {
     setIsUploading(true);
     setUploadProgress(0);
 
@@ -88,7 +56,40 @@ export default function PhotoUpload({ propertyId, onUploadComplete, existingPhot
       setIsUploading(false);
       setUploadProgress(0);
     }
-  };
+  }, [propertyId, onUploadComplete]);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    const files = Array.from(e.dataTransfer.files).filter(file => 
+      file.type.startsWith('image/')
+    );
+    
+    if (files.length > 0) {
+      uploadFiles(files);
+    }
+  }, [uploadFiles]);
+
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []).filter(file => 
+      file.type.startsWith('image/')
+    );
+    
+    if (files.length > 0) {
+      uploadFiles(files);
+    }
+  }, [uploadFiles]);
 
   return (
     <div className="space-y-4">
@@ -164,11 +165,12 @@ export default function PhotoUpload({ propertyId, onUploadComplete, existingPhot
                   exit={{ opacity: 0, scale: 0.8 }}
                   className="relative group"
                 >
-                  <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                    <img
+                  <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 relative">
+                    <Image
                       src={photo.url}
                       alt="Property photo"
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                   </div>
                   <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center">

@@ -1,0 +1,181 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Shield, Lock, User, CheckCircle, AlertCircle, Key } from 'lucide-react';
+
+export default function SetupPage() {
+  const router = useRouter();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [adminSecret, setAdminSecret] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [message, setMessage] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setStatus('error');
+      setMessage('Şifreler eşleşmiyor.');
+      return;
+    }
+
+    setStatus('loading');
+
+    try {
+      const res = await fetch('/api/admin/setup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password, adminSecret }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setStatus('success');
+        setTimeout(() => {
+          router.push('/admin/login');
+        }, 2000);
+      } else {
+        setStatus('error');
+        setMessage(data.error || 'Kurulum başarısız.');
+      }
+    } catch {
+      setStatus('error');
+      setMessage('Bir hata oluştu.');
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0F0F0F] flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary-gold/5 rounded-full blur-[100px]" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px]" />
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-gradient-to-br from-primary-gold to-primary-gold-dark rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary-gold/20">
+            <Shield className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-white mb-2">Sistem Kurulumu</h1>
+          <p className="text-white/40">
+            Yeni bir ana yönetici hesabı oluşturun.
+          </p>
+        </div>
+
+        <div className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+          {status === 'success' ? (
+            <div className="text-center py-8">
+              <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-green-500" />
+              </div>
+              <h2 className="text-xl font-bold text-white mb-2">Kurulum Tamamlandı!</h2>
+              <p className="text-white/60">Giriş sayfasına yönlendiriliyorsunuz...</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {status === 'error' && message && (
+                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4" />
+                  {message}
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-white/60 mb-1">Kurulum Anahtarı</label>
+                <div className="relative">
+                  <Key className="w-5 h-5 text-white/40 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="password"
+                    required
+                    value={adminSecret}
+                    onChange={(e) => setAdminSecret(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-primary-gold/50 transition-colors placeholder:text-white/20"
+                    placeholder="Sistem gizli anahtarı"
+                  />
+                </div>
+              </div>
+
+              <div className="h-px bg-white/10 my-4" />
+
+              <div>
+                <label className="block text-sm font-medium text-white/60 mb-1">Ad Soyad</label>
+                <div className="relative">
+                  <User className="w-5 h-5 text-white/40 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-primary-gold/50 transition-colors"
+                    placeholder="Adınız Soyadınız"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white/60 mb-1">E-posta</label>
+                <div className="relative">
+                  <User className="w-5 h-5 text-white/40 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-primary-gold/50 transition-colors"
+                    placeholder="admin@kenanemlak.com"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white/60 mb-1">Şifre</label>
+                <div className="relative">
+                  <Lock className="w-5 h-5 text-white/40 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-primary-gold/50 transition-colors"
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white/60 mb-1">Şifre Tekrar</label>
+                <div className="relative">
+                  <Lock className="w-5 h-5 text-white/40 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="password"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-primary-gold/50 transition-colors"
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={status === 'loading'}
+                  className="w-full bg-primary-gold text-black font-bold py-3.5 rounded-xl hover:bg-primary-gold-dark transition-all transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {status === 'loading' ? 'Kurulum Yapılıyor...' : 'Yönetici Oluştur'}
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

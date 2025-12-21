@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(newMsg);
 
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Mesaj gönderilemedi' }, { status: 500 });
   }
 }

@@ -7,7 +7,7 @@ const intlMiddleware = createMiddleware({
   defaultLocale: 'tr'
 });
 
-export default function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // If it's an admin path, just set the header and return (skip next-intl)

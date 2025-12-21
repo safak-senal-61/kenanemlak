@@ -5,33 +5,65 @@ import { ChevronDown, Search, MapPin, Home, Star, Award, Shield } from 'lucide-r
 import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from '@/i18n/routing'
+import { fetchWithCache } from '@/utils/apiCache'
+
+interface Property {
+  id: string
+  title: string
+  isActive: boolean
+  location: string
+  category: string
+  [key: string]: unknown
+}
 
 export default function HeroSection() {
   const t = useTranslations('Hero')
   const router = useRouter()
-  const [searchType, setSearchType] = useState(t('search.type.all'))
+  const [searchType, setSearchType] = useState('all')
   const [searchLocation, setSearchLocation] = useState('')
+  const [searchCategory, setSearchCategory] = useState('all')
   const [scrollY, setScrollY] = useState(0)
+  const [availableLocations, setAvailableLocations] = useState<string[]>([])
+  const [availableCategories, setAvailableCategories] = useState<string[]>([])
+  const [isLocationOpen, setIsLocationOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY)
     window.addEventListener('scroll', handleScroll)
+    
+    // Fetch available filters from properties
+    const fetchFilters = async () => {
+      try {
+        const data = await fetchWithCache<Property[]>('/api/properties')
+        if (data) {
+          const active = data.filter((p: Property) => p.isActive)
+          // Extract unique locations (simple distinct)
+          const locations = Array.from(new Set(active.map((p: Property) => p.location))).filter(Boolean) as string[]
+          // Extract unique categories
+          const categories = Array.from(new Set(active.map((p: Property) => p.category))).filter(Boolean) as string[]
+          
+          setAvailableLocations(locations)
+          setAvailableCategories(categories)
+        }
+      } catch (e) {
+        console.error('Error fetching filters:', e)
+      }
+    }
+    fetchFilters()
+
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   const handleSearch = () => {
     const params = new URLSearchParams()
-    if (searchType !== t('search.type.all')) {
-      // We might want to map localized values back to internal values if the backend expects specific English/Turkish strings.
-      // For now, assuming the backend or filter logic can handle what we send, or we should use keys.
-      // However, usually, search parameters should be locale-independent or the backend handles localization.
-      // Given the previous code used 'Tümü', let's assume we send the value selected.
-      // If the backend expects specific values like 'sale'/'rent', we should probably use values in <option> and display text separately.
-      // Let's check the option values below.
+    if (searchType !== 'all') {
       params.set('type', searchType)
     }
     if (searchLocation.trim()) {
       params.set('location', searchLocation.trim())
+    }
+    if (searchCategory !== 'all') {
+      params.set('category', searchCategory)
     }
     
     router.push(`/properties?${params.toString()}`)
@@ -204,43 +236,98 @@ export default function HeroSection() {
                 <span>{t('search.title')}</span>
               </motion.h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              {/* Search Tabs */}
+              <div className="flex justify-center mb-8">
+                <div className="bg-white/10 backdrop-blur-md p-1.5 rounded-2xl flex gap-1 border border-white/10">
+                  {['all', 'sale', 'rent'].map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => setSearchType(type)}
+                      className={`px-6 py-2.5 rounded-xl transition-all duration-300 text-sm md:text-base font-medium ${
+                        searchType === type 
+                          ? 'bg-primary-gold text-black shadow-lg scale-105' 
+                          : 'text-white hover:bg-white/10'
+                      }`}
+                    >
+                      {t(`search.type.${type}`)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
+                {/* Location Input with Autocomplete */}
                 <motion.div 
-                  className="relative"
+                  className="relative md:col-span-5 z-50"
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 1 }}
                 >
-                  <select
-                    value={searchType}
-                    onChange={(e) => setSearchType(e.target.value)}
-                    className="w-full px-4 py-4 bg-white/20 border border-white/30 rounded-xl text-white placeholder-gray-300 focus:ring-2 focus:ring-primary-gold focus:border-transparent appearance-none backdrop-blur-sm transition-all duration-300 hover:bg-white/25 [&>option]:text-black"
-                  >
-                    <option value={t('search.type.all')} className="text-charcoal">{t('search.type.all')}</option>
-                    <option value={t('search.type.sale')} className="text-charcoal">{t('search.type.sale')}</option>
-                    <option value={t('search.type.rent')} className="text-charcoal">{t('search.type.rent')}</option>
-                  </select>
-                </motion.div>
-                
-                <motion.div 
-                  className="relative"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.1 }}
-                >
-                  <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary-gold w-5 h-5" />
+                  <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary-gold w-5 h-5 z-10" />
                   <input
                     type="text"
                     placeholder={t('search.placeholder')}
                     value={searchLocation}
-                    onChange={(e) => setSearchLocation(e.target.value)}
+                    onChange={(e) => {
+                      setSearchLocation(e.target.value)
+                      setIsLocationOpen(true)
+                    }}
+                    onFocus={() => setIsLocationOpen(true)}
+                    onBlur={() => setTimeout(() => setIsLocationOpen(false), 200)}
                     className="w-full pl-12 pr-4 py-4 bg-white/20 border border-white/30 rounded-xl text-white placeholder-gray-300 focus:ring-2 focus:ring-primary-gold focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/25"
                   />
+                  
+                  {/* Autocomplete Dropdown */}
+                  {isLocationOpen && availableLocations.length > 0 && (
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-[#1a1a1a] border border-white/10 rounded-xl overflow-hidden shadow-2xl max-h-60 overflow-y-auto z-50">
+                      {availableLocations
+                        .filter(loc => loc.toLowerCase().includes(searchLocation.toLowerCase()))
+                        .map((loc, index) => (
+                          <button
+                            key={index}
+                            onClick={() => {
+                              setSearchLocation(loc)
+                              setIsLocationOpen(false)
+                            }}
+                            className="w-full text-left px-4 py-3 text-white/80 hover:bg-white/10 hover:text-primary-gold transition-colors border-b border-white/5 last:border-0 flex items-center gap-2"
+                          >
+                            <MapPin size={14} className="opacity-50" />
+                            {loc}
+                          </button>
+                        ))}
+                    </div>
+                  )}
                 </motion.div>
                 
+                {/* Category Dropdown */}
+                <motion.div 
+                  className="relative md:col-span-4"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.1 }}
+                >
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none z-10">
+                    <Home className="text-primary-gold w-5 h-5" />
+                  </div>
+                  <select
+                    value={searchCategory}
+                    onChange={(e) => setSearchCategory(e.target.value)}
+                    className="w-full pl-12 pr-10 py-4 bg-white/20 border border-white/30 rounded-xl text-white placeholder-gray-300 focus:ring-2 focus:ring-primary-gold focus:border-transparent appearance-none backdrop-blur-sm transition-all duration-300 hover:bg-white/25 [&>option]:text-black cursor-pointer"
+                  >
+                    <option value="all" className="bg-white text-black">Tüm Kategoriler</option>
+                    {availableCategories.map((cat, index) => (
+                      <option key={index} value={cat} className="bg-white text-black">{cat}</option>
+                    ))}
+                  </select>
+                  <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <ChevronDown className="text-white/50 w-4 h-4" />
+                  </div>
+                </motion.div>
+                
+                {/* Search Button */}
                 <motion.button 
                   onClick={handleSearch}
-                  className="group bg-gradient-to-r from-primary-gold to-primary-gold-dark hover:from-primary-gold-dark hover:to-primary-gold text-white px-6 py-4 rounded-xl font-bold transition-all duration-300 flex items-center justify-center space-x-2 shadow-xl hover:shadow-2xl transform hover:scale-105 relative overflow-hidden"
+                  className="md:col-span-3 group bg-gradient-to-r from-primary-gold to-primary-gold-dark hover:from-primary-gold-dark hover:to-primary-gold text-white px-6 py-4 rounded-xl font-bold transition-all duration-300 flex items-center justify-center space-x-2 shadow-xl hover:shadow-2xl transform hover:scale-105 relative overflow-hidden"
                   initial={{ opacity: 0, x: 30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 1.2 }}

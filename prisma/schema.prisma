@@ -31,6 +31,7 @@ model Property {
   title       String
   type        String   // "Satılık" | "Kiralık"
   category    String
+  subCategory String?  // "Daire", "Villa", "Rezidans" etc.
   price       String
   location    String
   area        Int      // m2 (Brüt)
@@ -48,6 +49,16 @@ model Property {
   kitchen     String?  // "Açık (Amerikan)", "Kapalı"
   parking     String?  // "Açık Otopark", "Kapalı Otopark", "Yok"
   usageStatus String?  // "Boş", "Kiracılı", "Mülk Sahibi"
+  
+  // Land specific fields
+  zoningStatus    String?
+  block           String?
+  parcel          String?
+  sheet           String?
+  kaks            String?
+  gabari          String?
+  titleDeedStatus String?
+
   description String?
   featured    Boolean  @default(false)
   views       Int      @default(0)
@@ -84,6 +95,26 @@ model Subscriber {
   @@map("subscribers")
 }
 
+model TeamMember {
+  id          String   @id @default(cuid())
+  name        String
+  role        String   // "Gayrimenkul Danışmanı", "Broker", etc.
+  slug        String   @unique // for url: /team/kenan-kadioglu
+  image       String?
+  email       String?
+  phone       String?
+  whatsapp    String?
+  location    String?
+  bio         String?  // Long text
+  socialMedia Json?    // { instagram: "...", linkedin: "...", twitter: "..." }
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("team_members")
+}
+
 model SystemSettings {
   id              String   @id @default(cuid())
   maintenanceMode Boolean  @default(false)
@@ -113,6 +144,7 @@ model ChatSession {
   userPhone   String?
   status      String    @default("bot") // bot, live_waiting, live_active, closed
   isRead      Boolean   @default(false) // Admin okudu mu?
+  adminTyping Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   messages    Message[]
@@ -130,4 +162,4 @@ model Message {
   createdAt DateTime    @default(now())
 
   @@map("messages")
-}
+}

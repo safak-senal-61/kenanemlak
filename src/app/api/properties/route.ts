@@ -28,9 +28,11 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const {
+      id,
       title,
       type,
       category,
+      subCategory,
       price,
       location,
       area,
@@ -52,12 +54,24 @@ export async function POST(request: Request) {
       imageUrl,
       images, // Array of image URLs
       featured,
+      zoningStatus,
+      block,
+      parcel,
+      sheet,
+      kaks,
+      gabari,
+      titleDeedStatus,
     } = body;
 
     // Basic validation
-    if (!title || !type || !price || !location) {
+    if (!title || !type || !price || !location || !category) {
+      console.log('Missing required fields:', { title, type, price, location, category });
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
+
+    console.log('Creating property with payload:', {
+      title, type, category, price, location
+    });
 
     let photosCreateData: { url: string; isMain: boolean; order: number }[] = [];
     
@@ -77,16 +91,18 @@ export async function POST(request: Request) {
 
     const property = await prisma.property.create({
       data: {
+        id: id || undefined,
         title,
         type,
         category,
-        price,
+        subCategory: subCategory || null,
+        price: String(price),
         location,
-        area: parseInt(area),
+        area: parseInt(area) || 0,
         areaNet: areaNet ? parseInt(areaNet) : null,
-        rooms: rooms,
-        bathrooms: parseInt(bathrooms),
-        buildingAge,
+        rooms: String(rooms || '0'),
+        bathrooms: bathrooms ? parseInt(bathrooms) : 0,
+        buildingAge: buildingAge ? String(buildingAge) : null,
         floorNumber: floorNumber ? parseInt(floorNumber) : null,
         totalFloors: totalFloors ? parseInt(totalFloors) : null,
         heating,
@@ -97,6 +113,13 @@ export async function POST(request: Request) {
         kitchen,
         parking,
         usageStatus,
+        zoningStatus,
+        block,
+        parcel,
+        sheet,
+        kaks,
+        gabari,
+        titleDeedStatus,
         description,
         featured: featured || false,
         isActive: true,
@@ -108,6 +131,8 @@ export async function POST(request: Request) {
         photos: true,
       },
     });
+
+    console.log('Property created successfully:', property.id);
 
     // Send email notifications to subscribers
     try {
@@ -145,6 +170,10 @@ export async function POST(request: Request) {
     return NextResponse.json(property, { status: 201 });
   } catch (error) {
     console.error('Error creating property:', error);
-    return NextResponse.json({ error: 'Error creating property' }, { status: 500 });
+    // Log detailed error if it's a Prisma error
+    if (typeof error === 'object' && error !== null) {
+      console.error('Full error details:', JSON.stringify(error, null, 2));
+    }
+    return NextResponse.json({ error: 'Error creating property', details: String(error) }, { status: 500 });
   }
 }

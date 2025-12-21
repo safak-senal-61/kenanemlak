@@ -9,10 +9,28 @@ import { Building, Users, Award, TrendingUp } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/routing'
+import { fetchWithCache } from '@/utils/apiCache'
+
+interface Property {
+  id: string
+  title: string
+  type: 'Satılık' | 'Kiralık'
+  isActive: boolean
+  featured: boolean
+  location: string
+  category: string
+  price: string
+  rooms: string
+  bathrooms: number
+  area: number
+  image?: string
+  photos?: { url: string }[]
+  [key: string]: unknown
+}
 
 export default function Home() {
   const t = useTranslations('HomePage')
-  const [featuredProperties, setFeaturedProperties] = useState<any[]>([])
+  const [featuredProperties, setFeaturedProperties] = useState<Property[]>([])
   const [stats, setStats] = useState([
     { icon: Building, label: 'activeListings', value: '0' },
     { icon: Users, label: 'happyCustomers', value: '500+' },
@@ -24,17 +42,17 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch('/api/properties')
-        if (res.ok) {
-          const data = await res.json()
+        const data = await fetchWithCache<Property[]>('/api/properties')
+        if (data) {
           // Show featured properties, or if none, show the latest 6 active properties
-          const activeProperties = data.filter((p: any) => p.isActive)
-          const featured = activeProperties.filter((p: any) => p.featured)
+          const activeProperties = data.filter((p: Property) => p.isActive)
+          const featured = activeProperties.filter((p: Property) => p.featured)
           const displayProps = featured.length > 0 ? featured : activeProperties.slice(0, 6)
           
-          setFeaturedProperties(displayProps.map((p: any) => ({
+          setFeaturedProperties(displayProps.map((p: Property) => ({
             ...p,
-            image: p.photos?.[0]?.url
+            image: p.photos?.[0]?.url,
+            type: p.type as "Satılık" | "Kiralık"
           })))
 
           setStats(prev => prev.map(s => 
@@ -193,16 +211,47 @@ export default function Home() {
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="relative"
+              className="relative h-[500px] bg-white rounded-2xl p-6 shadow-lg border border-gray-100"
             >
-              <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 w-full h-80 rounded-2xl flex items-center justify-center">
-                <div className="text-white text-center">
-                  <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Building className="w-12 h-12" />
-                  </div>
-                  <p className="text-lg font-semibold">Ofis Görseli</p>
-                  <p className="text-sm opacity-90">Trabzon / Türkiye</p>
-                </div>
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold text-gray-900">{t('testimonials.title')}</h3>
+                <div className="w-16 h-1 bg-yellow-500 mx-auto mt-2 rounded-full"></div>
+              </div>
+              
+              <div className="relative h-[380px] overflow-hidden">
+                <motion.div
+                  animate={{
+                    y: ["0%", "-50%"]
+                  }}
+                  transition={{
+                    duration: 20,
+                    repeat: Infinity,
+                    ease: "linear"
+                  }}
+                  className="space-y-4"
+                >
+                  {[1, 2, 3, 4, 1, 2, 3, 4].map((id, index) => (
+                    <div key={index} className="bg-gray-50 p-4 rounded-xl border border-gray-100 hover:shadow-md transition-shadow">
+                      <div className="flex items-center gap-3 mb-2">
+                         <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 font-bold">
+                            {t(`testimonials.items.${id}.name`).charAt(0)}
+                         </div>
+                         <div>
+                           <div className="font-semibold text-gray-900">{t(`testimonials.items.${id}.name`)}</div>
+                           <div className="text-xs text-yellow-600 font-medium">{t(`testimonials.items.${id}.role`)}</div>
+                         </div>
+                      </div>
+                      <p className="text-gray-600 text-sm leading-relaxed">&quot;{t(`testimonials.items.${id}.comment`)}&quot;</p>
+                      <div className="flex text-yellow-400 mt-2 text-xs">
+                        {'★'.repeat(5)}
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+                
+                {/* Fade gradients */}
+                <div className="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-white to-transparent z-10 pointer-events-none" />
+                <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent z-10 pointer-events-none" />
               </div>
             </motion.div>
           </div>
@@ -218,24 +267,23 @@ export default function Home() {
             viewport={{ once: true }}
           >
             <h2 className="text-4xl font-bold text-white mb-6">
-              Hayalinizdeki Eve Ulaşın
+              {t('ctaTitle')}
             </h2>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Profesyonel ekibimizle birlikte, size en uygun gayrimenkulü bulmak için 
-              çalışalım. Hemen iletişime geçin!
+              {t('ctaDescription')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
+              <Link
                 href="/contact"
                 className="bg-white text-yellow-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
               >
-                İletişime Geçin
-              </a>
+                {t('ctaButtonContact')}
+              </Link>
               <a
                 href="tel:+904622300000"
                 className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-yellow-600 transition-colors"
               >
-                Hemen Arayın
+                {t('ctaButtonCall')}
               </a>
             </div>
           </motion.div>

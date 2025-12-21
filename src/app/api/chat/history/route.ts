@@ -11,19 +11,34 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const messages = await prisma.message.findMany({
-      where: { sessionId },
-      orderBy: { createdAt: 'asc' },
+    // Session durumunu ve adminTyping bilgisini de alalım
+    const session = await prisma.chatSession.findUnique({
+      where: { id: sessionId },
       select: {
-        id: true,
-        content: true,
-        sender: true,
-        senderName: true,
-        createdAt: true
+        status: true,
+        adminTyping: true,
+        messages: {
+          orderBy: { createdAt: 'asc' },
+          select: {
+            id: true,
+            content: true,
+            sender: true,
+            senderName: true,
+            createdAt: true
+          }
+        }
       }
     });
 
-    return NextResponse.json({ messages });
+    if (!session) {
+      return NextResponse.json({ error: 'Session not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ 
+      messages: session.messages,
+      status: session.status,
+      adminTyping: session.adminTyping
+    });
 
   } catch (error) {
     console.error('Error fetching chat history:', error);
