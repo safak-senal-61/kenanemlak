@@ -153,15 +153,15 @@ function PropertiesContent() {
              <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                 <div className="flex items-center gap-2 text-gray-600 font-medium">
                   <span className="w-2 h-2 rounded-full bg-primary-gold" />
-                  {filteredProperties.length} ilan bulundu
+                  {t('resultsFound', { count: filteredProperties.length })}
                 </div>
                 
                 <div className="flex items-center gap-3 w-full sm:w-auto">
                   <div className="flex items-center gap-2 text-sm text-gray-500">
                     <SlidersHorizontal className="w-4 h-4" />
-                    Sıralama:
+                    {t('sortBy')}
                   </div>
-                  <select 
+                  <select  
                     value={sortBy} 
                     onChange={(e) => setSortBy(e.target.value)}
                     className="flex-1 sm:flex-none bg-gray-50 border-none rounded-lg px-4 py-2 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-primary-gold/50 cursor-pointer hover:bg-gray-100 transition-colors"
@@ -202,15 +202,15 @@ function PropertiesContent() {
              ) : (
                 <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-gray-100">
                   <Filter className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Sonuç Bulunamadı</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">{t('noResultsTitle')}</h3>
                   <p className="text-gray-500 max-w-md mx-auto">
-                    Aradığınız kriterlere uygun ilan bulunamadı. Lütfen filtreleri değiştirerek tekrar deneyin.
+                    {t('noResultsDesc')}
                   </p>
                   <button 
                     onClick={() => setFilters({})}
                     className="mt-6 px-6 py-2.5 bg-primary-gold text-white font-medium rounded-xl hover:bg-primary-gold-dark transition-colors shadow-lg shadow-primary-gold/20"
                   >
-                    Filtreleri Temizle
+                    {t('clearFilters')}
                   </button>
                 </div>
              )}

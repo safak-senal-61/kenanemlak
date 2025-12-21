@@ -190,6 +190,59 @@
       "call": "Call Now"
     }
   },
+  "PropertiesPage": {
+    "title": "Your Dream Living Space",
+    "subtitle": "Meet Trabzon's most exclusive real estate portfolio. Modern, comfortable and personalized options.",
+    "resultsFound": "{count} listings found",
+    "sortBy": "Sort by:",
+    "noResultsTitle": "No Results Found",
+    "noResultsDesc": "No listings found matching your criteria. Please try changing the filters.",
+    "clearFilters": "Clear Filters",
+    "filters": {
+       "type": "Listing Type",
+       "category": "Category",
+       "location": "Location",
+       "sort": "Sort",
+       "all": "All"
+    },
+    "sortOptions": {
+       "newest": "Newest",
+       "priceAsc": "Price (Low to High)",
+       "priceDesc": "Price (High to Low)",
+       "size": "Size"
+    },
+    "cta": {
+      "title": "Couldn't Find What You're Looking For?",
+      "description": "Let us help you with your special real estate search. Contact us now!",
+      "button": "Contact Us",
+      "call": "Call Now"
+    }
+  },
+  "PropertyFilters": {
+    "filterBtn": "Filter",
+    "filtersTitle": "Filters",
+    "location": "Location",
+    "locationPlaceholder": "Search City, District...",
+    "category": "Category",
+    "allCategories": "All Categories",
+    "selectType": "Select Listing Type",
+    "selectSubType": "Select Property Type",
+    "priceRange": "Price Range",
+    "min": "Min",
+    "max": "Max",
+    "area": "m² (Gross)",
+    "rooms": "Number of Rooms",
+    "buildingAge": "Building Age",
+    "features": {
+      "credit": "Credit Suitable",
+      "inComplex": "In Complex",
+      "swap": "Swap Available",
+      "furnished": "Furnished",
+      "balcony": "Balcony",
+      "elevator": "Elevator"
+    },
+    "clearFilters": "Clear Filters"
+  },
   "TeamPage": {
     "title": "Our Professional Team",
     "subtitle": "We are with you in your real estate processes with our experienced and expert staff.",

@@ -170,6 +170,11 @@
     "title": "Hayalinizdeki Yaşam Alanı",
     "subtitle": "Trabzon'un en seçkin gayrimenkul portföyü ile tanışın. Modern, konforlu ve size özel seçenekler.",
     "searchPlaceholder": "İlan başlığı, konum veya özellik ara...",
+    "resultsFound": "{count} ilan bulundu",
+    "sortBy": "Sıralama:",
+    "noResultsTitle": "Sonuç Bulunamadı",
+    "noResultsDesc": "Aradığınız kriterlere uygun ilan bulunamadı. Lütfen filtreleri değiştirerek tekrar deneyin.",
+    "clearFilters": "Filtreleri Temizle",
     "filters": {
        "type": "İlan Türü",
        "category": "Kategori",
@@ -189,6 +194,31 @@
       "button": "İletişime Geçin",
       "call": "Hemen Arayın"
     }
+  },
+  "PropertyFilters": {
+    "filterBtn": "Filtrele",
+    "filtersTitle": "Filtreler",
+    "location": "Konum",
+    "locationPlaceholder": "İl, İlçe, Mahalle Ara...",
+    "category": "Kategori",
+    "allCategories": "Tüm Kategoriler",
+    "selectType": "İlan Tipi Seçiniz",
+    "selectSubType": "Emlak Tipi Seçiniz",
+    "priceRange": "Fiyat Aralığı",
+    "min": "Min",
+    "max": "Max",
+    "area": "m² (Brüt)",
+    "rooms": "Oda Sayısı",
+    "buildingAge": "Bina Yaşı",
+    "features": {
+      "credit": "Krediye Uygun",
+      "inComplex": "Site İçerisinde",
+      "swap": "Takaslı",
+      "furnished": "Eşyalı",
+      "balcony": "Balkon",
+      "elevator": "Asansör"
+    },
+    "clearFilters": "Filtreleri Temizle"
   },
   "TeamPage": {
     "title": "Profesyonel Ekibimiz",

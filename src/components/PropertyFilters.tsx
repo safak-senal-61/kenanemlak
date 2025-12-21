@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { MapPin, Filter, X, ChevronDown, Check } from 'lucide-react'
 import { PROPERTY_CATEGORIES } from '@/constants/propertyData'
 import { Property, PropertyFilters as IPropertyFilters } from '@/types/property'
+import { useTranslations } from 'next-intl'
 
 interface PropertyFiltersProps {
   filters: IPropertyFilters
@@ -12,6 +13,7 @@ interface PropertyFiltersProps {
 }
 
 export default function PropertyFilters({ filters, setFilters }: PropertyFiltersProps) {
+  const t = useTranslations('PropertyFilters')
   const [isOpen, setIsOpen] = useState(false) // Mobile toggle
 
   // Extract unique locations from properties for "İl, İlçe, Mahalle" simulation
@@ -48,7 +50,7 @@ export default function PropertyFilters({ filters, setFilters }: PropertyFilters
         className="lg:hidden fixed bottom-4 right-4 z-50 bg-primary-gold text-black px-6 py-3 rounded-full shadow-lg font-bold flex items-center gap-2"
       >
         <Filter className="w-5 h-5" />
-        Filtrele
+        {t('filterBtn')}
       </button>
 
       {/* Sidebar */}
@@ -59,7 +61,7 @@ export default function PropertyFilters({ filters, setFilters }: PropertyFilters
       `}>
         <div className="p-6 space-y-8">
           <div className="flex items-center justify-between lg:hidden mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Filtreler</h2>
+            <h2 className="text-xl font-bold text-gray-900">{t('filtersTitle')}</h2>
             <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-gray-100 rounded-full">
               <X className="w-6 h-6" />
             </button>
@@ -67,12 +69,12 @@ export default function PropertyFilters({ filters, setFilters }: PropertyFilters
 
           {/* Location Search */}
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Konum</h3>
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">{t('location')}</h3>
             <div className="relative">
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input 
                 type="text" 
-                placeholder="İl, İlçe, Mahalle Ara..." 
+                placeholder={t('locationPlaceholder')} 
                 className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-gold/50 focus:border-primary-gold outline-none transition-all text-sm"
                 value={filters.locationSearch || ''}
                 onChange={(e) => handleInputChange('locationSearch', e.target.value)}
@@ -82,7 +84,7 @@ export default function PropertyFilters({ filters, setFilters }: PropertyFilters
 
           {/* Category Hierarchy */}
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Kategori</h3>
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">{t('category')}</h3>
             
             <div className="space-y-3">
               {/* Main Category */}
@@ -96,7 +98,7 @@ export default function PropertyFilters({ filters, setFilters }: PropertyFilters
                   }}
                   className="w-full appearance-none pl-4 pr-10 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-gold/50 focus:border-primary-gold outline-none text-sm cursor-pointer"
                 >
-                  <option value="">Tüm Kategoriler</option>
+                  <option value="">{t('allCategories')}</option>
                   {categoryOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
@@ -113,7 +115,7 @@ export default function PropertyFilters({ filters, setFilters }: PropertyFilters
                   disabled={!filters.category}
                   className="w-full appearance-none pl-4 pr-10 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-gold/50 focus:border-primary-gold outline-none text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <option value="">İlan Tipi Seçiniz</option>
+                  <option value="">{t('selectType')}</option>
                   {typeOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
@@ -127,7 +129,7 @@ export default function PropertyFilters({ filters, setFilters }: PropertyFilters
                   disabled={!filters.type}
                   className="w-full appearance-none pl-4 pr-10 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-gold/50 focus:border-primary-gold outline-none text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <option value="">Emlak Tipi Seçiniz</option>
+                  <option value="">{t('selectSubType')}</option>
                   {subCategoryOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
@@ -137,12 +139,12 @@ export default function PropertyFilters({ filters, setFilters }: PropertyFilters
 
           {/* Price Range */}
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Fiyat Aralığı</h3>
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">{t('priceRange')}</h3>
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <input 
                   type="number" 
-                  placeholder="Min" 
+                  placeholder={t('min')} 
                   className="w-full pl-3 pr-2 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:border-primary-gold outline-none"
                   value={filters.minPrice || ''}
                   onChange={(e) => handleInputChange('minPrice', e.target.value)}
@@ -151,7 +153,7 @@ export default function PropertyFilters({ filters, setFilters }: PropertyFilters
               <div className="relative flex-1">
                 <input 
                   type="number" 
-                  placeholder="Max" 
+                  placeholder={t('max')} 
                   className="w-full pl-3 pr-2 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:border-primary-gold outline-none"
                   value={filters.maxPrice || ''}
                   onChange={(e) => handleInputChange('maxPrice', e.target.value)}
@@ -162,12 +164,12 @@ export default function PropertyFilters({ filters, setFilters }: PropertyFilters
 
           {/* Area Range */}
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">m² (Brüt)</h3>
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">{t('area')}</h3>
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <input 
                   type="number" 
-                  placeholder="Min" 
+                  placeholder={t('min')} 
                   className="w-full pl-3 pr-2 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:border-primary-gold outline-none"
                   value={filters.minArea || ''}
                   onChange={(e) => handleInputChange('minArea', e.target.value)}
@@ -176,7 +178,7 @@ export default function PropertyFilters({ filters, setFilters }: PropertyFilters
               <div className="relative flex-1">
                 <input 
                   type="number" 
-                  placeholder="Max" 
+                  placeholder={t('max')} 
                   className="w-full pl-3 pr-2 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:border-primary-gold outline-none"
                   value={filters.maxArea || ''}
                   onChange={(e) => handleInputChange('maxArea', e.target.value)}
@@ -187,7 +189,7 @@ export default function PropertyFilters({ filters, setFilters }: PropertyFilters
 
           {/* Room Count */}
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Oda Sayısı</h3>
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">{t('rooms')}</h3>
             <div className="grid grid-cols-2 gap-2">
               {["1+0", "1+1", "2+1", "3+1", "4+1", "5+1", "5+2"].map((room) => (
                 <label key={room} className="flex items-center gap-2 cursor-pointer group">
@@ -211,7 +213,7 @@ export default function PropertyFilters({ filters, setFilters }: PropertyFilters
 
           {/* Building Age */}
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Bina Yaşı</h3>
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">{t('buildingAge')}</h3>
             <div className="space-y-2">
               {["0 (Yeni)", "1-5", "6-10", "11-15", "16-20", "21+"].map((age) => (
                 <label key={age} className="flex items-center gap-2 cursor-pointer group">
@@ -243,12 +245,12 @@ export default function PropertyFilters({ filters, setFilters }: PropertyFilters
           {/* Toggles */}
           <div className="space-y-4 pt-4 border-t border-gray-100">
             {[
-              { label: 'Krediye Uygun', key: 'credit' },
-              { label: 'Site İçerisinde', key: 'inComplex' },
-              { label: 'Takaslı', key: 'swap' },
-              { label: 'Eşyalı', key: 'furnished' },
-              { label: 'Balkon', key: 'balcony' },
-              { label: 'Asansör', key: 'elevator' },
+              { label: t('features.credit'), key: 'credit' },
+              { label: t('features.inComplex'), key: 'inComplex' },
+              { label: t('features.swap'), key: 'swap' },
+              { label: t('features.furnished'), key: 'furnished' },
+              { label: t('features.balcony'), key: 'balcony' },
+              { label: t('features.elevator'), key: 'elevator' },
             ].map((toggle) => (
               <label key={toggle.key} className="flex items-center justify-between cursor-pointer group">
                 <span className="text-sm font-medium text-gray-700">{toggle.label}</span>
@@ -275,7 +277,7 @@ export default function PropertyFilters({ filters, setFilters }: PropertyFilters
             onClick={() => setFilters({})}
             className="w-full py-3 text-sm font-medium text-red-500 bg-red-50 hover:bg-red-100 rounded-xl transition-colors"
           >
-            Filtreleri Temizle
+            {t('clearFilters')}
           </button>
         </div>
       </div>
