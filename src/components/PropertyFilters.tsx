@@ -14,6 +14,7 @@ interface PropertyFiltersProps {
 
 export default function PropertyFilters({ filters, setFilters }: PropertyFiltersProps) {
   const t = useTranslations('PropertyFilters')
+  const tCats = useTranslations('categories')
   const [isOpen, setIsOpen] = useState(false) // Mobile toggle
 
   // Extract unique locations from properties for "İl, İlçe, Mahalle" simulation
@@ -99,7 +100,7 @@ export default function PropertyFilters({ filters, setFilters }: PropertyFilters
                   className="w-full appearance-none pl-4 pr-10 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-gold/50 focus:border-primary-gold outline-none text-sm cursor-pointer"
                 >
                   <option value="">{t('allCategories')}</option>
-                  {categoryOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                  {categoryOptions.map(opt => <option key={opt} value={opt}>{tCats(opt)}</option>)}
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
               </div>
@@ -116,7 +117,7 @@ export default function PropertyFilters({ filters, setFilters }: PropertyFilters
                   className="w-full appearance-none pl-4 pr-10 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-gold/50 focus:border-primary-gold outline-none text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="">{t('selectType')}</option>
-                  {typeOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                  {typeOptions.map(opt => <option key={opt} value={opt}>{tCats(opt)}</option>)}
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
               </div>
@@ -130,7 +131,7 @@ export default function PropertyFilters({ filters, setFilters }: PropertyFilters
                   className="w-full appearance-none pl-4 pr-10 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-gold/50 focus:border-primary-gold outline-none text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="">{t('selectSubType')}</option>
-                  {subCategoryOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                  {subCategoryOptions.map(opt => <option key={opt} value={opt}>{tCats(opt)}</option>)}
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
               </div>

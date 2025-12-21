@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { MapPin, Bed, Square, Heart, Bath, ArrowRight, Home, ChevronLeft, ChevronRight, Building2 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 
 interface PropertyCardProps {
   id: string
@@ -38,6 +39,8 @@ export default function PropertyCard({
   photos = [],
   createdAt,
 }: PropertyCardProps) {
+  const t = useTranslations('PropertyCard')
+  const tCats = useTranslations('categories')
   const [isLiked, setIsLiked] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
@@ -125,12 +128,12 @@ export default function PropertyCard({
           <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
             {featured && (
               <span className="bg-primary-gold text-white px-3 py-1 rounded-lg text-xs font-bold shadow-lg shadow-primary-gold/20 flex items-center gap-1 uppercase tracking-wider">
-                <span>★</span> Fırsat
+                <span>★</span> {t('opportunity')}
               </span>
             )}
             {isNew && (
               <span className="bg-blue-500 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-lg shadow-blue-500/20 uppercase tracking-wider">
-                Yeni
+                {t('new')}
               </span>
             )}
             <span className={`px-3 py-1 rounded-lg text-xs font-bold shadow-lg backdrop-blur-md uppercase tracking-wider ${
@@ -138,7 +141,7 @@ export default function PropertyCard({
                 ? 'bg-emerald-500/90 text-white shadow-emerald-500/20' 
                 : 'bg-purple-500/90 text-white shadow-purple-500/20'
             }`}>
-              {type}
+              {tCats(type)}
             </span>
           </div>
 
@@ -159,7 +162,7 @@ export default function PropertyCard({
           <div className="absolute bottom-3 left-3 right-3 z-10">
             <div className="bg-white/95 backdrop-blur-md px-4 py-3 rounded-xl shadow-lg border border-white/50 flex items-center justify-between">
               <div>
-                <span className="text-xs text-gray-500 font-medium uppercase tracking-wide block mb-0.5">Fiyat</span>
+                <span className="text-xs text-gray-500 font-medium uppercase tracking-wide block mb-0.5">{t('price')}</span>
                 <span className="text-lg font-bold text-primary-gold-dark leading-none">
                   {price}
                 </span>
@@ -173,7 +176,7 @@ export default function PropertyCard({
           {/* Category & Location */}
           <div className="flex items-center gap-2 text-xs font-medium text-gray-500 mb-3">
             <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded-md border border-gray-200">
-              {subCategory || category}
+              {tCats(subCategory || category)}
             </span>
             <span className="w-1 h-1 rounded-full bg-gray-300" />
             <div className="flex items-center truncate text-gray-400">
