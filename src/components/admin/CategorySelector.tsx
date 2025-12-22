@@ -43,15 +43,15 @@ export default function CategorySelector({ onSelect, initialSelection }: Categor
   const isComplete = category && type && subCategory
 
   return (
-    <div className="w-full bg-[#1A1A1A] border border-white/10 rounded-2xl p-6 shadow-2xl">
-      <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-        <span className="w-8 h-8 rounded-full bg-primary-gold text-black flex items-center justify-center text-sm">1</span>
+    <div className="w-full bg-[#1A1A1A] border border-white/10 rounded-2xl p-3 md:p-6 shadow-2xl overflow-hidden">
+      <h3 className="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 flex items-center gap-2">
+        <span className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-primary-gold text-black flex items-center justify-center text-xs md:text-sm">1</span>
         Adım Adım Kategori Seç
       </h3>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 h-[400px]">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:h-[500px]">
         {/* Column 1: Main Category */}
-        <div className="bg-white/5 rounded-xl border border-white/5 overflow-hidden flex flex-col">
+        <div className="bg-white/5 rounded-xl border border-white/5 overflow-hidden flex flex-col min-h-[200px] md:min-h-0">
           <div className="p-3 bg-white/5 border-b border-white/5 font-semibold text-white/60 text-sm">
             Kategori
           </div>
@@ -74,7 +74,7 @@ export default function CategorySelector({ onSelect, initialSelection }: Categor
         </div>
 
         {/* Column 2: Type (Satılık/Kiralık) */}
-        <div className={`bg-white/5 rounded-xl border border-white/5 overflow-hidden flex flex-col transition-opacity duration-300 ${!category ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
+        <div className={`bg-white/5 rounded-xl border border-white/5 overflow-hidden flex flex-col min-h-[200px] md:min-h-0 transition-opacity duration-300 ${!category ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
           <div className="p-3 bg-white/5 border-b border-white/5 font-semibold text-white/60 text-sm">
             İşlem Tipi
           </div>
@@ -97,7 +97,7 @@ export default function CategorySelector({ onSelect, initialSelection }: Categor
         </div>
 
         {/* Column 3: SubCategory */}
-        <div className={`bg-white/5 rounded-xl border border-white/5 overflow-hidden flex flex-col transition-opacity duration-300 ${!type ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
+        <div className={`bg-white/5 rounded-xl border border-white/5 overflow-hidden flex flex-col min-h-[200px] md:min-h-0 transition-opacity duration-300 ${!type ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
           <div className="p-3 bg-white/5 border-b border-white/5 font-semibold text-white/60 text-sm">
             Emlak Tipi
           </div>
@@ -120,7 +120,7 @@ export default function CategorySelector({ onSelect, initialSelection }: Categor
         </div>
 
         {/* Column 4: Confirmation */}
-        <div className="bg-white/5 rounded-xl border border-white/5 p-6 flex flex-col items-center justify-center text-center">
+        <div className="bg-white/5 rounded-xl border border-white/5 p-6 flex flex-col items-center justify-center text-center min-h-[200px] md:min-h-0">
           <AnimatePresence mode="wait">
             {isComplete ? (
               <motion.div

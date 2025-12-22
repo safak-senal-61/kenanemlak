@@ -237,7 +237,7 @@ export default function PropertyFilters({ filters, setFilters }: PropertyFilters
                         }
                     }}
                   />
-                  <span className="text-sm text-gray-600 group-hover:text-gray-900">{age}</span>
+                  <span className="text-sm text-gray-600 group-hover:text-gray-900">{age === "0 (Yeni)" ? `0 (${t('new')})` : age}</span>
                 </label>
               ))}
             </div>

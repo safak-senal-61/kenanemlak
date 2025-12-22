@@ -210,6 +210,7 @@
     "area": "m² (Gross)",
     "rooms": "Number of Rooms",
     "buildingAge": "Building Age",
+    "new": "New",
     "features": {
       "credit": "Credit Suitable",
       "inComplex": "In Complex",

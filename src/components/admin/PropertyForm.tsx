@@ -420,8 +420,8 @@ export default function PropertyForm({ onCancel, onSuccess, initialData, isEditM
 
   if (step === 1) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] text-white p-6 md:p-10 font-sans selection:bg-primary-gold/30">
-        <div className="max-w-7xl mx-auto space-y-8">
+      <div className="min-h-full bg-[#0a0a0a] text-white p-2 md:p-10 font-sans selection:bg-primary-gold/30 overflow-x-hidden">
+        <div className="max-w-7xl mx-auto space-y-6 md:space-y-8">
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -434,7 +434,7 @@ export default function PropertyForm({ onCancel, onSuccess, initialData, isEditM
                 <span className="font-medium text-sm">Geri Dön</span>
              </button>
              <div>
-                <h1 className="text-4xl font-bold tracking-tight text-white mt-2">Kategori Seçimi</h1>
+                <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white mt-2">Kategori Seçimi</h1>
                 <p className="text-white/50 mt-1 font-light">İlanınız için doğru kategoriyi seçerek başlayın.</p>
              </div>
           </motion.div>
@@ -446,8 +446,8 @@ export default function PropertyForm({ onCancel, onSuccess, initialData, isEditM
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white p-6 md:p-10 font-sans selection:bg-primary-gold/30">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-full bg-[#0a0a0a] text-white p-2 md:p-10 font-sans selection:bg-primary-gold/30 overflow-x-hidden">
+      <div className="max-w-7xl mx-auto space-y-6 md:space-y-8">
         {/* Header */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
@@ -501,7 +501,7 @@ export default function PropertyForm({ onCancel, onSuccess, initialData, isEditM
             className="space-y-6"
           >
             {/* Section 1: Basic Info */}
-            <motion.div variants={itemVariants} className="relative z-20 bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-3xl p-8 shadow-2xl">
+            <motion.div variants={itemVariants} className="relative z-20 bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-3xl p-6 md:p-8 shadow-2xl">
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-12 h-12 bg-gradient-to-br from-primary-gold to-primary-gold-dark rounded-2xl flex items-center justify-center text-black shadow-lg shadow-primary-gold/20">
                   <FileText className="w-6 h-6" />
@@ -521,7 +521,7 @@ export default function PropertyForm({ onCancel, onSuccess, initialData, isEditM
                   required
                 />
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                    <FloatingInput 
                      label="Fiyat (TL)"
                      name="price"

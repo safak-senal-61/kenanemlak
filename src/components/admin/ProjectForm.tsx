@@ -200,7 +200,7 @@ export default function ProjectForm({ onCancel, onSuccess }: ProjectFormProps) {
   return (
     <div className="max-w-7xl mx-auto pb-12">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
         <div className="flex items-center gap-4">
           <button 
             onClick={onCancel}
@@ -217,18 +217,18 @@ export default function ProjectForm({ onCancel, onSuccess }: ProjectFormProps) {
           </div>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 w-full md:w-auto">
           <button 
             type="button"
             onClick={onCancel}
-            className="px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-medium transition-colors"
+            className="flex-1 md:flex-none px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-medium transition-colors text-center"
           >
             İptal
           </button>
           <button
             onClick={handleSubmit}
             disabled={uploading}
-            className="px-8 py-3 rounded-xl bg-primary-gold hover:bg-primary-gold-dark text-white font-bold shadow-lg shadow-primary-gold/20 flex items-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 md:flex-none px-8 py-3 rounded-xl bg-primary-gold hover:bg-primary-gold-dark text-white font-bold shadow-lg shadow-primary-gold/20 flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {uploading ? (
               <>

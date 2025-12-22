@@ -197,21 +197,21 @@ export default function PropertyCard({
                 <Bed className="w-4 h-4 text-gray-400 group-hover:text-primary-gold transition-colors" />
                 <span className="text-sm font-bold text-gray-900">{rooms}</span>
               </div>
-              <span className="text-[10px] text-gray-500 font-medium">Oda</span>
+              <span className="text-[10px] text-gray-500 font-medium">{t('room')}</span>
             </div>
             <div className="flex flex-col items-center justify-center p-2 rounded-lg bg-gray-50 group-hover:bg-primary-gold/5 transition-colors">
               <div className="flex items-center gap-1.5 mb-1">
                 <Bath className="w-4 h-4 text-gray-400 group-hover:text-primary-gold transition-colors" />
                 <span className="text-sm font-bold text-gray-900">{bathrooms}</span>
               </div>
-              <span className="text-[10px] text-gray-500 font-medium">Banyo</span>
+              <span className="text-[10px] text-gray-500 font-medium">{t('bathroom')}</span>
             </div>
             <div className="flex flex-col items-center justify-center p-2 rounded-lg bg-gray-50 group-hover:bg-primary-gold/5 transition-colors">
               <div className="flex items-center gap-1.5 mb-1">
                 <Square className="w-4 h-4 text-gray-400 group-hover:text-primary-gold transition-colors" />
                 <span className="text-sm font-bold text-gray-900">{area}</span>
               </div>
-              <span className="text-[10px] text-gray-500 font-medium">m²</span>
+              <span className="text-[10px] text-gray-500 font-medium">{t('size')}</span>
             </div>
           </div>
 
@@ -222,7 +222,7 @@ export default function PropertyCard({
                 <Building2 className="w-4 h-4 text-gray-400" />
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] text-gray-400 font-medium uppercase">İlan Sahibi</span>
+                <span className="text-[10px] text-gray-400 font-medium uppercase">{t('owner')}</span>
                 <span className="text-xs font-bold text-gray-900">Kenan Emlak</span>
               </div>
             </div>

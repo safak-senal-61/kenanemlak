@@ -197,7 +197,7 @@ export default function TeamManagement() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-0">
         <h2 className="text-2xl font-bold text-white">Ekip Yönetimi</h2>
         <button
           onClick={() => handleOpenModal()}
@@ -264,7 +264,7 @@ export default function TeamManagement() {
             </div>
             
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 <div className="space-y-2">
                   <label className="text-sm text-white/60">Ad Soyad</label>
                   <input

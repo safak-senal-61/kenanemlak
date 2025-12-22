@@ -242,6 +242,26 @@ export default function Header() {
                       </motion.div>
                     )
                   })}
+                  
+                  {/* Mobile Subscribe Button */}
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: navigation.length * 0.1 }}
+                    className="pt-4"
+                  >
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false)
+                        setIsSubscribeModalOpen(true)
+                      }}
+                      className="w-full group relative bg-gradient-to-r from-primary-gold to-primary-gold-dark text-white p-4 rounded-xl font-medium hover:from-primary-gold-dark hover:to-primary-gold transition-all duration-300 shadow-lg hover:shadow-2xl overflow-hidden flex items-center justify-center space-x-2"
+                    >
+                      <Bell className="w-5 h-5" />
+                      <span>Abone Ol</span>
+                      <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                    </button>
+                  </motion.div>
                 </div>
 
                 {/* Footer Info */}

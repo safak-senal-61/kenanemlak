@@ -28,6 +28,7 @@ export default function AdminManagement() {
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState('editor'); // Default to editor (restricted)
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+  const [isInviting, setIsInviting] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -56,6 +57,7 @@ export default function AdminManagement() {
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
     setFeedback(null);
+    setIsInviting(true);
 
     try {
       const token = localStorage.getItem('adminToken');
@@ -80,6 +82,8 @@ export default function AdminManagement() {
       }
     } catch {
       setFeedback({ type: 'error', message: 'Bir hata oluştu.' });
+    } finally {
+      setIsInviting(false);
     }
   };
 
@@ -129,7 +133,7 @@ export default function AdminManagement() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-0">
         <div>
           <h2 className="text-2xl font-bold text-white">Yönetici Ekibi</h2>
           <p className="text-white/40 text-sm mt-1">Admin ve editörleri yönetin.</p>
@@ -269,7 +273,7 @@ export default function AdminManagement() {
       {/* Invite Modal */}
       {isInviteModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-[#1A1A1A] border border-white/10 rounded-2xl w-full max-w-md p-6 shadow-2xl">
+          <div className="bg-[#1A1A1A] border border-white/10 rounded-2xl w-[95%] max-w-md p-6 shadow-2xl">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold text-white">Yeni Yönetici Davet Et</h3>
               <button 
@@ -339,9 +343,10 @@ export default function AdminManagement() {
 
               <button
                 type="submit"
-                className="w-full bg-primary-gold text-white font-bold py-3 rounded-xl hover:bg-primary-gold-dark transition-colors mt-2"
+                disabled={isInviting}
+                className="w-full bg-primary-gold text-white font-bold py-3 rounded-xl hover:bg-primary-gold-dark transition-colors mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Davet Gönder
+                {isInviting ? 'Gönderiliyor...' : 'Davet Gönder'}
               </button>
             </form>
           </div>

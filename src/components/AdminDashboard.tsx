@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { clearCache } from '@/utils/apiCache';
@@ -26,7 +26,10 @@ import {
   MapPin,
   MessageSquare,
   Send,
-  Shield
+  Shield,
+  Menu,
+  X,
+  ArrowLeft
 } from 'lucide-react';
 
 // Chat Types
@@ -139,40 +142,53 @@ const MessagesPanel = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-100px)] bg-[#141414] rounded-2xl border border-white/5 overflow-hidden">
+    <div className="flex flex-col md:flex-row h-[calc(100vh-140px)] md:h-[calc(100vh-100px)] bg-[#141414] rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
       {/* Sessions List */}
-      <div className="w-1/3 border-r border-white/5 flex flex-col">
-        <div className="p-4 border-b border-white/5">
-          <h2 className="text-lg font-bold text-white">Canlı Destek Talepleri</h2>
+      <div className={`w-full md:w-1/3 border-r border-white/5 flex flex-col ${selectedSessionId ? 'hidden md:flex' : 'flex'}`}>
+        <div className="p-4 border-b border-white/5 bg-[#141414]">
+          <h2 className="text-lg font-bold text-white flex items-center gap-2">
+            <MessageSquare className="w-5 h-5 text-primary-gold" />
+            Canlı Destek
+          </h2>
+          <p className="text-xs text-white/40 mt-1">Aktif görüşmeleri buradan yönetin</p>
         </div>
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
           {sessions.length === 0 ? (
-            <div className="p-8 text-center text-white/30">
-              Bekleyen mesaj yok.
+            <div className="flex flex-col items-center justify-center h-full p-8 text-center text-white/30 space-y-4">
+              <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center">
+                <MessageSquare className="w-8 h-8 opacity-50" />
+              </div>
+              <p>Bekleyen mesaj yok.</p>
             </div>
           ) : (
             sessions.map(session => (
               <div
                 key={session.id}
                 onClick={() => setSelectedSessionId(session.id)}
-                className={`p-4 border-b border-white/5 cursor-pointer hover:bg-white/5 transition-colors ${
-                  selectedSessionId === session.id ? 'bg-white/5 border-l-2 border-l-primary-gold' : ''
+                className={`p-4 border-b border-white/5 cursor-pointer transition-all hover:bg-white/5 ${
+                  selectedSessionId === session.id 
+                    ? 'bg-white/5 border-l-4 border-l-primary-gold pl-[12px]' 
+                    : 'border-l-4 border-l-transparent'
                 }`}
               >
                 <div className="flex justify-between items-start mb-1">
-                  <h3 className="font-semibold text-white">{session.userName}</h3>
-                  <span className="text-xs text-white/40">
+                  <h3 className={`font-semibold ${selectedSessionId === session.id ? 'text-white' : 'text-white/80'}`}>
+                    {session.userName}
+                  </h3>
+                  <span className="text-[10px] text-white/40 bg-white/5 px-2 py-1 rounded-full">
                     {new Date(session.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
-                <p className="text-sm text-white/60 truncate">
+                <p className="text-sm text-white/50 truncate pr-4">
                   {session.messages[session.messages.length - 1]?.content || 'Mesaj yok'}
                 </p>
-                <div className="mt-2 flex gap-2">
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${
-                    session.status === 'live_waiting' ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'
+                <div className="mt-3 flex gap-2">
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+                    session.status === 'live_waiting' 
+                      ? 'bg-red-500/10 text-red-400 border border-red-500/20' 
+                      : 'bg-green-500/10 text-green-400 border border-green-500/20'
                   }`}>
-                    {session.status === 'live_waiting' ? 'Bekliyor' : 'Aktif'}
+                    {session.status === 'live_waiting' ? '• Bekliyor' : '• Aktif'}
                   </span>
                 </div>
               </div>
@@ -182,32 +198,46 @@ const MessagesPanel = () => {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col bg-[#0a0a0a]">
+      <div className={`flex-1 flex flex-col bg-[#0a0a0a] ${selectedSessionId ? 'flex' : 'hidden md:flex'}`}>
         {selectedSession ? (
           <>
-            <div className="p-4 border-b border-white/5 bg-[#141414] flex justify-between items-center">
-              <div>
-                <h3 className="font-bold text-white">{selectedSession.userName}</h3>
-                <p className="text-xs text-white/40">{selectedSession.userEmail}</p>
+            <div className="p-4 border-b border-white/5 bg-[#141414] flex items-center gap-4 shadow-sm z-10">
+              <button 
+                onClick={() => setSelectedSessionId(null)}
+                className="md:hidden p-2 -ml-2 text-white/60 hover:text-white hover:bg-white/5 rounded-full transition-colors"
+              >
+                <ArrowLeft size={20} />
+              </button>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-gold/20 to-primary-gold/5 border border-primary-gold/20 flex items-center justify-center text-primary-gold font-bold">
+                  {selectedSession.userName.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <h3 className="font-bold text-white leading-tight">{selectedSession.userName}</h3>
+                  <p className="text-xs text-white/40">{selectedSession.userEmail}</p>
+                </div>
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-dots-pattern">
               {selectedSession.messages.map(msg => (
                 <div
                   key={msg.id}
                   className={`flex ${msg.sender === 'admin' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[70%] p-3 rounded-2xl text-sm ${
+                    className={`max-w-[85%] md:max-w-[70%] p-3 md:p-4 rounded-2xl text-sm leading-relaxed shadow-lg ${
                       msg.sender === 'admin'
-                        ? 'bg-primary-gold text-black rounded-tr-none'
+                        ? 'bg-primary-gold text-black rounded-tr-none font-medium'
                         : msg.sender === 'bot'
-                        ? 'bg-white/5 text-white/70 border border-white/10'
-                        : 'bg-white/10 text-white rounded-tl-none'
+                        ? 'bg-white/5 text-white/70 border border-white/10 text-xs italic'
+                        : 'bg-[#1a1a1a] text-white border border-white/10 rounded-tl-none'
                     }`}
                   >
                     {msg.content}
+                    <div className={`text-[10px] mt-1 ${msg.sender === 'admin' ? 'text-black/50' : 'text-white/30'}`}>
+                      {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -215,18 +245,18 @@ const MessagesPanel = () => {
             </div>
 
             <div className="p-4 border-t border-white/5 bg-[#141414]">
-              <form onSubmit={handleSendReply} className="flex gap-2">
+              <form onSubmit={handleSendReply} className="flex gap-3">
                 <input
                   type="text"
                   value={reply}
                   onChange={(e) => setReply(e.target.value)}
                   placeholder="Cevap yazın..."
-                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white placeholder:text-white/30 focus:outline-none focus:border-primary-gold/50"
+                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-primary-gold/50 focus:ring-1 focus:ring-primary-gold/50 transition-all"
                 />
                 <button
                   type="submit"
                   disabled={!reply.trim()}
-                  className="bg-primary-gold hover:bg-primary-gold-dark text-black p-2 rounded-xl transition-colors"
+                  className="bg-primary-gold hover:bg-primary-gold-dark text-black p-3 rounded-xl transition-all shadow-lg shadow-primary-gold/20 disabled:opacity-50 disabled:shadow-none"
                 >
                   <Send size={20} />
                 </button>
@@ -234,9 +264,12 @@ const MessagesPanel = () => {
             </div>
           </>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center text-white/30">
-            <MessageSquare size={48} className="mb-4 opacity-20" />
-            <p>Görüntülemek için bir sohbet seçin</p>
+          <div className="flex-1 flex flex-col items-center justify-center text-white/20 p-8 text-center">
+            <div className="w-24 h-24 rounded-full bg-white/5 flex items-center justify-center mb-6 animate-pulse">
+              <MessageSquare size={48} className="opacity-50" />
+            </div>
+            <h3 className="text-xl font-bold text-white/40 mb-2">Görüşme Seçilmedi</h3>
+            <p className="max-w-xs mx-auto">Detayları görüntülemek ve yanıtlamak için sol menüden bir sohbet seçin.</p>
           </div>
         )}
       </div>
@@ -249,7 +282,21 @@ export default function AdminDashboard() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'properties');
   const [admin, setAdmin] = useState<AdminUser | null>(null);
-  const [isSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+      if (mobile) setIsSidebarOpen(false);
+      else setIsSidebarOpen(true);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const tab = searchParams.get('tab');
@@ -341,26 +388,54 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-[#0F0F0F] text-white flex font-sans selection:bg-primary-gold selection:text-black">
+      {/* Mobile Backdrop */}
+      <AnimatePresence>
+        {isMobile && isSidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsSidebarOpen(false)}
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
       {/* Sidebar */}
       <motion.div 
-        initial={{ width: 280 }}
-        animate={{ width: isSidebarOpen ? 280 : 80 }}
-        className="bg-[#141414] border-r border-white/5 flex flex-col h-screen sticky top-0 z-50 transition-all duration-300"
+        initial={false}
+        animate={{ 
+          width: isMobile ? 280 : (isSidebarOpen ? 280 : 80),
+          x: isMobile ? (isSidebarOpen ? 0 : -280) : 0
+        }}
+        className={`bg-[#141414] border-r border-white/5 flex flex-col h-screen z-50 transition-all duration-300 ${
+          isMobile ? 'fixed inset-y-0 left-0' : 'sticky top-0'
+        }`}
       >
         {/* Logo Area */}
-        <div className="p-6 border-b border-white/5 flex items-center gap-4">
-          <div className="w-10 h-10 bg-gradient-to-br from-primary-gold to-primary-gold-dark rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-primary-gold/10">
-            <Home className="w-5 h-5 text-white" />
+        <div className="p-6 border-b border-white/5 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary-gold to-primary-gold-dark rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-primary-gold/10">
+              <Home className="w-5 h-5 text-white" />
+            </div>
+            {(!isMobile && isSidebarOpen || isMobile) && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="overflow-hidden whitespace-nowrap"
+              >
+                <h2 className="font-bold text-lg tracking-tight">Kenan Kadıoğlu</h2>
+                <p className="text-xs text-white/40">Admin Paneli</p>
+              </motion.div>
+            )}
           </div>
-          {isSidebarOpen && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="overflow-hidden whitespace-nowrap"
+          {isMobile && (
+            <button 
+              onClick={() => setIsSidebarOpen(false)}
+              className="text-white/50 hover:text-white"
             >
-              <h2 className="font-bold text-lg tracking-tight">Kenan Kadıoğlu</h2>
-              <p className="text-xs text-white/40">Admin Paneli</p>
-            </motion.div>
+              <X className="w-6 h-6" />
+            </button>
           )}
         </div>
 
@@ -373,7 +448,10 @@ export default function AdminDashboard() {
             return (
               <motion.button
                 key={item.id}
-                onClick={() => setActiveTab(item.id)}
+                onClick={() => {
+                  setActiveTab(item.id);
+                  if (isMobile) setIsSidebarOpen(false);
+                }}
                 className={`w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-left transition-all duration-200 group relative overflow-hidden ${
                   isActive
                     ? 'bg-white/5 text-white shadow-inner'
@@ -391,7 +469,7 @@ export default function AdminDashboard() {
                   />
                 )}
                 <Icon className={`w-5 h-5 relative z-10 transition-colors ${isActive ? 'text-primary-gold' : 'group-hover:text-white'}`} />
-                {isSidebarOpen && (
+                {(!isMobile && isSidebarOpen || isMobile) && (
                   <span className="font-medium relative z-10">{item.label}</span>
                 )}
               </motion.button>
@@ -403,10 +481,10 @@ export default function AdminDashboard() {
         <div className="p-4 border-t border-white/5">
           <button
             onClick={handleLogout}
-            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-red-400 hover:bg-red-500/10 transition-colors ${!isSidebarOpen && 'justify-center'}`}
+            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-red-400 hover:bg-red-500/10 transition-colors ${!isMobile && !isSidebarOpen && 'justify-center'}`}
           >
             <LogOut className="w-5 h-5" />
-            {isSidebarOpen && <span>Çıkış Yap</span>}
+            {(!isMobile && isSidebarOpen || isMobile) && <span>Çıkış Yap</span>}
           </button>
         </div>
       </motion.div>
@@ -414,42 +492,66 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header */}
-        <header className="h-20 bg-[#141414]/50 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-8 sticky top-0 z-40">
-          <div className="flex items-center gap-4">
-            <h1 className="text-xl font-semibold text-white/80">
-              {menuItems.find(i => i.id === activeTab)?.label}
-            </h1>
-            <span className="text-white/20">/</span>
-            <span className="text-sm text-white/40">
-              {menuItems.find(i => i.id === activeTab)?.description}
-            </span>
+        <header className="h-auto min-h-[5rem] py-4 md:py-0 bg-[#141414]/50 backdrop-blur-xl border-b border-white/5 flex flex-col md:flex-row items-center justify-between px-4 md:px-8 sticky top-0 z-40 gap-4">
+          <div className="flex items-center justify-between w-full md:w-auto gap-4">
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                className="lg:hidden text-white/50 hover:text-white"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+              <div className="flex flex-col">
+                <h1 className="text-xl font-semibold text-white/80 leading-tight">
+                  {menuItems.find(i => i.id === activeTab)?.label}
+                </h1>
+                <p className="text-xs text-white/40 hidden md:block">
+                  {menuItems.find(i => i.id === activeTab)?.description}
+                </p>
+              </div>
+            </div>
+            
+            {/* Mobile Profile Icon */}
+            <div className="md:hidden flex items-center gap-3">
+               <button className="relative p-2 rounded-full hover:bg-white/5 transition-colors">
+                <Bell className="w-5 h-5 text-white/60" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary-gold rounded-full"></span>
+              </button>
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 border border-white/10 flex items-center justify-center text-xs font-bold">
+                {admin.email[0].toUpperCase()}
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-center gap-6">
-            <div className="relative">
+          <div className="flex items-center gap-4 w-full md:w-auto">
+            <div className="relative w-full md:w-auto">
               <Search className="w-5 h-5 text-white/40 absolute left-3 top-1/2 -translate-y-1/2" />
               <input 
                 type="text" 
                 placeholder="Ara..." 
-                className="bg-white/5 border border-white/10 rounded-full pl-10 pr-4 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-primary-gold/50 w-64 transition-all focus:w-80"
+                className="bg-white/5 border border-white/10 rounded-full pl-10 pr-4 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-primary-gold/50 w-full md:w-64 transition-all focus:w-full md:focus:w-80"
               />
             </div>
-            <button className="relative p-2 rounded-full hover:bg-white/5 transition-colors">
-              <Bell className="w-5 h-5 text-white/60" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary-gold rounded-full"></span>
-            </button>
-            <div className="h-8 w-px bg-white/10"></div>
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 border border-white/10 flex items-center justify-center text-xs font-bold">
-                {admin.email[0].toUpperCase()}
+            
+            {/* Desktop Profile Area */}
+            <div className="hidden md:flex items-center gap-6">
+              <button className="relative p-2 rounded-full hover:bg-white/5 transition-colors">
+                <Bell className="w-5 h-5 text-white/60" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary-gold rounded-full"></span>
+              </button>
+              <div className="h-8 w-px bg-white/10"></div>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 border border-white/10 flex items-center justify-center text-xs font-bold">
+                  {admin.email[0].toUpperCase()}
+                </div>
+                <span className="text-sm font-medium text-white/80 hidden sm:block">{admin.email}</span>
               </div>
-              <span className="text-sm font-medium text-white/80 hidden sm:block">{admin.email}</span>
             </div>
           </div>
         </header>
 
         {/* Content Area */}
-        <main className="flex-1 p-6 overflow-y-auto custom-scrollbar">
+        <main className="flex-1 p-0 overflow-y-auto custom-scrollbar">
           <motion.div
             key={activeTab}
             initial={{ opacity: 0, y: 10 }}
@@ -755,7 +857,7 @@ function SettingsPanel() {
 
   if (loading) {
     return (
-      <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-8">
+      <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-4 md:p-8 m-4 md:m-6">
         <div className="border-b border-white/5 pb-6 mb-8">
           <h2 className="text-2xl font-bold text-white">Ayarlar</h2>
           <p className="text-white/40 mt-1">Sistem genel ayarlarını buradan yapılandırabilirsiniz.</p>
@@ -766,7 +868,7 @@ function SettingsPanel() {
   }
 
   return (
-    <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-8">
+    <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-4 md:p-8 m-4 md:m-6">
       <div className="border-b border-white/5 pb-6 mb-8">
         <h2 className="text-2xl font-bold text-white">Ayarlar</h2>
         <p className="text-white/40 mt-1">Sistem genel ayarlarını buradan yapılandırabilirsiniz.</p>
@@ -803,3 +905,4 @@ function SettingsPanel() {
     </div>
   );
 }
+
