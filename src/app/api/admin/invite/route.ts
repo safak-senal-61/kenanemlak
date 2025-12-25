@@ -82,7 +82,12 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    const invitationUrl = `${process.env.NEXTAUTH_URL}/admin/register?token=${token}`
+    // Get base URL from request headers to support both localhost and production domains
+    const host = request.headers.get('host');
+    const protocol = request.headers.get('x-forwarded-proto') || 'http';
+    const baseUrl = `${protocol}://${host}`;
+
+    const invitationUrl = `${baseUrl}/admin/register?token=${token}`
 
     try {
       await sendEmail({

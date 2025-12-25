@@ -58,7 +58,12 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const inviteUrl = `${process.env.SITE_URL || 'http://localhost:3000'}/admin/register?token=${token}`;
+    // Get base URL from request headers to support both localhost and production domains
+    const host = request.headers.get('host');
+    const protocol = request.headers.get('x-forwarded-proto') || 'http';
+    const baseUrl = `${protocol}://${host}`;
+    
+    const inviteUrl = `${baseUrl}/admin/register?token=${token}`;
     
     await sendEmail({
       to: email,
