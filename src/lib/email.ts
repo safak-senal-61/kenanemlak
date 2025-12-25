@@ -16,7 +16,7 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
 
   try {
     await resend.emails.send({
-      from: process.env.RESEND_FROM || 'Kenan Kadıoğlu Emlak <onboarding@resend.dev>',
+      from: process.env.RESEND_FROM || 'Kenan Kadıoğlu Emlak <info@kenankadioglu.com.tr>',
       to: options.to,
       subject: options.subject,
       html: options.html,
