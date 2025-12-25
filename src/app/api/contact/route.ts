@@ -24,11 +24,11 @@ export async function POST(request: Request) {
     });
 
     // Send email to admin
-    // Using SMTP_USER as the recipient since that's likely the admin email
-    const adminEmail = process.env.SMTP_USER; 
+    // Using ADMIN_EMAIL as the recipient
+    const adminEmail = process.env.ADMIN_EMAIL || process.env.SMTP_USER; 
     
     if (!adminEmail) {
-      console.error('SMTP_USER environment variable is not set');
+      console.error('ADMIN_EMAIL environment variable is not set');
       return NextResponse.json(
         { error: 'Server configuration error' },
         { status: 500 }

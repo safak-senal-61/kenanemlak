@@ -76,9 +76,9 @@ export async function POST(request: Request) {
       </html>
     `;
 
-    // Send to admin (SMTP_USER)
+    // Send to admin (ADMIN_EMAIL)
     await sendEmail({
-      to: process.env.SMTP_USER || '',
+      to: process.env.ADMIN_EMAIL || process.env.SMTP_USER || '',
       subject: `Randevu Talebi: ${name} - ${propertyTitle}`,
       html: htmlContent,
     });
