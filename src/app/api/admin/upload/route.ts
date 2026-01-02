@@ -1,22 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
 import { randomUUID } from 'crypto';
-
-async function saveUploadedFile(buffer: Buffer, originalName: string, propertyId: string): Promise<string> {
-  const uploadDir = join(process.cwd(), 'public', 'uploads', propertyId);
-  await mkdir(uploadDir, { recursive: true });
-
-  const ext = originalName.split('.').pop();
-  const fileName = `${randomUUID()}.${ext}`;
-  const filePath = join(uploadDir, fileName);
-
-  await writeFile(filePath, buffer);
-
-  return `/uploads/${propertyId}/${fileName}`;
-}
+import { supabaseAdmin as supabase } from '@/lib/supabase';
 import { verifyToken } from '@/lib/jwt';
 import { prisma } from '@/lib/prisma'
+
+async function saveUploadedFile(buffer: Buffer, originalName: string, propertyId: string): Promise<string> {
+  const parts = originalName.split('.');
+  const rawExt = parts.length > 1 ? parts.pop() || '' : '';
+  
+  // Sanitize extension (remove non-alphanumeric chars)
+  const ext = rawExt.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() || 'bin';
+  
+  const fileName = `${propertyId}/${randomUUID()}.${ext}`;
+
+  const { error } = await supabase
+    .storage
+    .from('properties')
+    .upload(fileName, buffer, {
+      contentType: `image/${ext}`,
+      upsert: true
+    });
+
+  if (error) {
+    throw error;
+  }
+
+  const { data: { publicUrl } } = supabase
+    .storage
+    .from('properties')
+    .getPublicUrl(fileName);
+
+  return publicUrl;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -59,6 +74,14 @@ export async function POST(request: NextRequest) {
     if (!file) {
       return NextResponse.json(
         { error: 'Dosya bulunamadı' },
+        { status: 400 }
+      );
+    }
+
+    // Check file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: 'Dosya boyutu 5MB\'dan büyük olamaz' },
         { status: 400 }
       );
     }

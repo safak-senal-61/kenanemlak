@@ -15,6 +15,7 @@ interface MessageModalProps {
 export default function MessageModal({ isOpen, onClose, subscriberEmail, subscriberName, emails }: MessageModalProps) {
   const [subject, setSubject] = useState('')
   const [message, setMessage] = useState('')
+  const [isHtml, setIsHtml] = useState(false)
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [feedback, setFeedback] = useState('')
 
@@ -32,8 +33,8 @@ export default function MessageModal({ isOpen, onClose, subscriberEmail, subscri
         : '/api/admin/subscribers/message'
         
       const body = isBulk
-        ? { emails, subject, message }
-        : { email: subscriberEmail, subject, message }
+        ? { emails, subject, message, isHtml }
+        : { email: subscriberEmail, subject, message, isHtml }
 
       const res = await fetch(endpoint, {
         method: 'POST',
@@ -117,20 +118,32 @@ export default function MessageModal({ isOpen, onClose, subscriberEmail, subscri
                       required
                       value={subject}
                       onChange={(e) => setSubject(e.target.value)}
-                      className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                      className="w-full px-4 py-2 bg-white text-gray-900 placeholder:text-gray-400 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                       placeholder="Mesaj konusu..."
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Mesaj</label>
                     <textarea
-                      required
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      rows={6}
-                      className="w-full px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent resize-none"
-                      placeholder="Mesajınızı yazın..."
+                      className={`w-full px-4 py-2 text-gray-900 placeholder:text-gray-400 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500/50 min-h-[200px] resize-y ${isHtml ? 'font-mono text-sm bg-gray-50' : 'bg-white'}`}
+                      placeholder={isHtml ? '<html>\n  <body>\n    <h1>Merhaba</h1>\n    <p>İçeriğinizi buraya yazın...</p>\n  </body>\n</html>' : "Mesajınızı buraya yazın..."}
+                      required
                     />
+                  </div>
+
+                  <div className="flex items-center gap-2 mb-6">
+                    <input
+                      type="checkbox"
+                      id="isHtml"
+                      checked={isHtml}
+                      onChange={(e) => setIsHtml(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-yellow-600 focus:ring-yellow-500 cursor-pointer"
+                    />
+                    <label htmlFor="isHtml" className="text-sm text-gray-700 cursor-pointer select-none">
+                      HTML Formatında Gönder (Manuel Editör)
+                    </label>
                   </div>
 
                   {status === 'error' && (

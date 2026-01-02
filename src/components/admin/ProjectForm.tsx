@@ -155,7 +155,18 @@ export default function ProjectForm({ onCancel, onSuccess }: ProjectFormProps) {
     if (e.dataTransfer.files) {
       const newFiles = Array.from(e.dataTransfer.files)
       
-      const newUrls = newFiles.map(file => URL.createObjectURL(file))
+      // 5MB Check
+      const validFiles = newFiles.filter(file => {
+        if (file.size > 5 * 1024 * 1024) {
+          alert(`${file.name} 5MB'dan büyük! Lütfen daha küçük bir dosya seçin.`)
+          return false
+        }
+        return true
+      })
+
+      if (validFiles.length === 0) return
+
+      const newUrls = validFiles.map(file => URL.createObjectURL(file))
       setImageUrls(prev => [...prev, ...newUrls])
     }
   }

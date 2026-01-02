@@ -46,10 +46,10 @@ async function test() {
       html: '<p>This is a test email sent via script to verify Resend configuration.</p>'
     });
     console.log('Email sent successfully!');
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to send email:', error);
-    if (error.response) {
-      console.error('Response data:', error.response.data);
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      console.error('Response data:', (error as { response: { data: unknown } }).response.data);
     }
   }
 }

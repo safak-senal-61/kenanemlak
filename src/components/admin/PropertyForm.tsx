@@ -216,12 +216,23 @@ export default function PropertyForm({ onCancel, onSuccess, initialData, isEditM
   const uploadFiles = async (filesToUpload: File[]) => {
     if (filesToUpload.length === 0) return
 
+    // 5MB Size Check
+    const validFiles = filesToUpload.filter(file => {
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`${file.name} 5MB'dan büyük! Lütfen daha küçük bir dosya seçin.`)
+        return false
+      }
+      return true
+    })
+
+    if (validFiles.length === 0) return
+
     setUploading(true)
 
     try {
       const newUrls: string[] = []
       
-      for (const file of filesToUpload) {
+      for (const file of validFiles) {
         const uploadFormData = new FormData()
         uploadFormData.append('file', file)
         

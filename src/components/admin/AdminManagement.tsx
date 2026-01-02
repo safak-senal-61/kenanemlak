@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Trash2, UserPlus, Mail, Shield, X } from 'lucide-react';
+import { Trash2, UserPlus, Mail, Shield, X, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 
 interface Admin {
   id: string;
@@ -84,6 +84,30 @@ export default function AdminManagement() {
       setFeedback({ type: 'error', message: 'Bir hata oluştu.' });
     } finally {
       setIsInviting(false);
+    }
+  };
+
+  const handleRoleUpdate = async (id: string, newRole: string) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const res = await fetch('/api/admin/users', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ id, role: newRole })
+      });
+
+      if (res.ok) {
+        fetchData();
+        setFeedback({ type: 'success', message: 'Rol güncellendi.' });
+      } else {
+        const data = await res.json();
+        setFeedback({ type: 'error', message: data.error || 'Rol güncellenemedi.' });
+      }
+    } catch {
+      setFeedback({ type: 'error', message: 'Bir hata oluştu.' });
     }
   };
 
@@ -206,13 +230,33 @@ export default function AdminManagement() {
                     {new Date(admin.createdAt).toLocaleDateString('tr-TR')}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button
-                      onClick={() => handleDeleteAdmin(admin.id)}
-                      className="text-white/40 hover:text-red-400 transition-colors p-2"
-                      title="Sil"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <div className="flex justify-end items-center gap-2">
+                      {admin.role === 'editor' && (
+                        <button
+                          onClick={() => handleRoleUpdate(admin.id, 'admin')}
+                          className="text-white/40 hover:text-green-400 transition-colors p-2"
+                          title="Süper Admin Yap"
+                        >
+                          <ArrowUpCircle className="w-4 h-4" />
+                        </button>
+                      )}
+                      {admin.role === 'admin' && (
+                        <button
+                          onClick={() => handleRoleUpdate(admin.id, 'editor')}
+                          className="text-white/40 hover:text-yellow-400 transition-colors p-2"
+                          title="Editör Yap"
+                        >
+                          <ArrowDownCircle className="w-4 h-4" />
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleDeleteAdmin(admin.id)}
+                        className="text-white/40 hover:text-red-400 transition-colors p-2"
+                        title="Sil"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

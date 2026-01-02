@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, X, Upload } from 'lucide-react';
 import Image from 'next/image';
+import { clearCache } from '@/utils/apiCache';
 
 interface TeamMember {
   id: string;
@@ -112,6 +113,12 @@ export default function TeamManagement() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Check file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Dosya boyutu 5MB\'dan büyük olamaz!');
+      return;
+    }
+
     setUploading(true);
     const data = new FormData();
     data.append('file', file);
@@ -159,6 +166,8 @@ export default function TeamManagement() {
       });
 
       if (res.ok) {
+        // Clear cache so the public page updates immediately
+        clearCache('/api/team');
         handleCloseModal();
         fetchMembers();
       } else {

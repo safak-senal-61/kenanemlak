@@ -13,6 +13,7 @@
     "@headlessui/react": "^2.2.9",
     "@prisma/adapter-pg": "^7.1.0",
     "@prisma/client": "^5.22.0",
+    "@supabase/supabase-js": "^2.89.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
     "bcryptjs": "^3.0.3",

@@ -64,10 +64,10 @@ export default async function TeamMemberPage({ params }: PageProps) {
             <div className="h-48 bg-gradient-to-r from-charcoal to-gray-800 relative">
               <div className="absolute inset-0 bg-primary-gold/10 pattern-grid-lg opacity-20"></div>
             </div>
-            <div className="px-8 pb-8">
-              <div className="relative flex flex-col md:flex-row justify-between items-end -mt-20 mb-6 gap-4">
+            <div className="px-6 md:px-8 pb-8">
+              <div className="relative flex flex-col md:flex-row justify-between items-center md:items-end -mt-20 mb-6 gap-6 md:gap-4">
                 <div className="relative">
-                  <div className="w-40 h-40 rounded-full border-4 border-white shadow-lg bg-gray-200 flex items-center justify-center overflow-hidden relative">
+                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-lg bg-gray-200 flex items-center justify-center overflow-hidden relative">
                     {member.image ? (
                       <Image 
                         src={member.image} 
@@ -81,27 +81,27 @@ export default async function TeamMemberPage({ params }: PageProps) {
                       </div>
                     )}
                   </div>
-                  <div className="absolute bottom-2 right-2 w-8 h-8 bg-green-500 border-4 border-white rounded-full" title="Online"></div>
+                  <div className="absolute bottom-2 right-2 w-6 h-6 md:w-8 md:h-8 bg-green-500 border-4 border-white rounded-full" title="Online"></div>
                 </div>
-                <div className="flex gap-3 mb-4 w-full md:w-auto">
+                <div className="flex flex-wrap justify-center gap-3 w-full md:w-auto mb-4 md:mb-4">
                   {member.phone && (
-                    <a href={`tel:${member.phone.replace(/\s/g, '')}`} className="flex-1 md:flex-none bg-primary-gold hover:bg-primary-gold-dark text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-primary-gold/20 transition-all hover:-translate-y-1 flex items-center justify-center gap-2">
-                      <Phone className="w-5 h-5" />
+                    <a href={`tel:${member.phone.replace(/\s/g, '')}`} className="flex-1 md:flex-none bg-primary-gold hover:bg-primary-gold-dark text-white px-5 py-2.5 md:px-6 md:py-3 rounded-xl font-semibold shadow-lg shadow-primary-gold/20 transition-all hover:-translate-y-1 flex items-center justify-center gap-2 text-sm md:text-base min-w-[120px]">
+                      <Phone className="w-4 h-4 md:w-5 md:h-5" />
                       <span>{t('call')}</span>
                     </a>
                   )}
                   {member.whatsapp && (
-                    <a href={`https://wa.me/${member.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex-1 md:flex-none bg-[#25D366] hover:bg-[#128C7E] text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-green-500/20 transition-all hover:-translate-y-1 flex items-center justify-center gap-2">
-                      <MessageCircle className="w-5 h-5" />
+                    <a href={`https://wa.me/${member.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex-1 md:flex-none bg-[#25D366] hover:bg-[#128C7E] text-white px-5 py-2.5 md:px-6 md:py-3 rounded-xl font-semibold shadow-lg shadow-green-500/20 transition-all hover:-translate-y-1 flex items-center justify-center gap-2 text-sm md:text-base min-w-[120px]">
+                      <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
                       <span>{t('whatsapp')}</span>
                     </a>
                   )}
                 </div>
               </div>
 
-              <div>
-                <h1 className="text-4xl font-bold text-charcoal mb-2">{member.name}</h1>
-                <p className="text-xl text-primary-gold font-medium mb-6">{member.role}</p>
+              <div className="text-center md:text-left">
+                <h1 className="text-3xl md:text-4xl font-bold text-charcoal mb-2">{member.name}</h1>
+                <p className="text-lg md:text-xl text-primary-gold font-medium mb-6">{member.role}</p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-gray-100 pt-6">
                   {member.location && (
@@ -116,26 +116,26 @@ export default async function TeamMemberPage({ params }: PageProps) {
                     </div>
                   )}
                   {member.email && (
-                    <div className="flex items-center gap-3 text-gray-600">
-                      <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-600">
+                    <a href={`mailto:${member.email}`} className="flex items-center gap-3 text-gray-600 group transition-all duration-300 hover:-translate-y-1">
+                      <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 group-hover:bg-purple-100 group-hover:scale-110 transition-all duration-300">
                         <Mail className="w-5 h-5" />
                       </div>
                       <div>
                         <p className="text-xs text-gray-400 font-medium uppercase">{t('email')}</p>
-                        <p className="font-semibold text-sm">{member.email}</p>
+                        <p className="font-semibold text-sm group-hover:text-purple-600 transition-colors">{member.email}</p>
                       </div>
-                    </div>
+                    </a>
                   )}
                   {member.phone && (
-                    <div className="flex items-center gap-3 text-gray-600">
-                      <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-600">
+                    <a href={`tel:${member.phone.replace(/\s/g, '')}`} className="flex items-center gap-3 text-gray-600 group transition-all duration-300 hover:-translate-y-1">
+                      <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 group-hover:bg-orange-100 group-hover:scale-110 transition-all duration-300">
                         <Phone className="w-5 h-5" />
                       </div>
                       <div>
                         <p className="text-xs text-gray-400 font-medium uppercase">{t('phone')}</p>
-                        <p className="font-semibold">{member.phone}</p>
+                        <p className="font-semibold group-hover:text-orange-600 transition-colors">{member.phone}</p>
                       </div>
-                    </div>
+                    </a>
                   )}
                 </div>
               </div>

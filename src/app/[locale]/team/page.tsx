@@ -30,7 +30,8 @@ export default function TeamPage() {
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const data = await fetchWithCache<TeamMember[]>('/api/team', undefined, 5 * 60 * 60 * 1000)
+        // Cache for 1 minute only
+        const data = await fetchWithCache<TeamMember[]>('/api/team', undefined, 60 * 1000)
         if (data) {
           setMembers(data)
         }

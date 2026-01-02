@@ -67,3 +67,51 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: 'Yönetici silinemedi.' }, { status: 500 });
   }
 }
+
+export async function PATCH(request: NextRequest) {
+  const authResult = authenticateToken(request);
+  if (authResult.error) {
+    return NextResponse.json({ error: authResult.error }, { status: authResult.status });
+  }
+
+  // Only admin can update roles
+  if (authResult.admin!.role !== 'admin') {
+    return NextResponse.json({ error: 'Bu işlem için yetkiniz yok.' }, { status: 403 });
+  }
+
+  try {
+    const body = await request.json();
+    const { id, role } = body;
+
+    if (!id || !role) {
+      return NextResponse.json({ error: 'ID ve Rol bilgisi gerekli.' }, { status: 400 });
+    }
+
+    if (role !== 'admin' && role !== 'editor') {
+      return NextResponse.json({ error: 'Geçersiz rol.' }, { status: 400 });
+    }
+
+    // Prevent changing self role (to avoid locking oneself out)
+    if (id === authResult.admin!.adminId) {
+      return NextResponse.json({ error: 'Kendi rolünüzü değiştiremezsiniz.' }, { status: 400 });
+    }
+
+    const updatedAdmin = await prisma.admin.update({
+      where: { id },
+      data: { role },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        isActive: true,
+        createdAt: true,
+      },
+    });
+
+    return NextResponse.json(updatedAdmin);
+  } catch (error) {
+    console.error('Update admin role error:', error);
+    return NextResponse.json({ error: 'Rol güncellenemedi.' }, { status: 500 });
+  }
+}

@@ -1,8 +1,6 @@
 
 import { NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
-import { existsSync } from 'fs';
+import { supabaseAdmin as supabase } from '@/lib/supabase';
 
 export async function POST(request: Request) {
   try {
@@ -14,32 +12,65 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
+    // Check file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      return NextResponse.json({ error: 'File size too large. Max 5MB.' }, { status: 400 });
+    }
+
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
+    // Helper function for Turkish character conversion
+    const turkishToEnglish = (str: string) => {
+      return str
+        .replace(/ğ/g, 'g')
+        .replace(/Ğ/g, 'G')
+        .replace(/ü/g, 'u')
+        .replace(/Ü/g, 'U')
+        .replace(/ş/g, 's')
+        .replace(/Ş/g, 'S')
+        .replace(/ı/g, 'i')
+        .replace(/İ/g, 'I')
+        .replace(/ö/g, 'o')
+        .replace(/Ö/g, 'O')
+        .replace(/ç/g, 'c')
+        .replace(/Ç/g, 'C');
+    };
+
+    const sanitizedOriginalName = turkishToEnglish(file.name)
+      .replace(/\s+/g, '-')
+      .replace(/[^a-zA-Z0-9\-\._]/g, '');
+
     // Create unique filename
-    const filename = `${Date.now()}-${file.name.replace(/\s/g, '-')}`;
+    const filename = `${Date.now()}-${sanitizedOriginalName}`;
     
-    // Determine upload directory
-    let uploadDir = path.join(process.cwd(), 'public/uploads');
-    let urlPrefix = '/uploads';
-
+    // Determine upload path in bucket
+    let uploadPath = filename;
     if (folder) {
-      // Sanitize folder path to prevent directory traversal
+      // Sanitize folder path
       const safeFolder = folder.replace(/[^a-zA-Z0-9\-\_\/]/g, '');
-      uploadDir = path.join(uploadDir, safeFolder);
-      urlPrefix = `/uploads/${safeFolder}`;
-    }
-    
-    if (!existsSync(uploadDir)) {
-        await mkdir(uploadDir, { recursive: true });
+      uploadPath = `${safeFolder}/${filename}`;
     }
 
-    const filepath = path.join(uploadDir, filename);
+    const { error } = await supabase
+      .storage
+      .from('uploads')
+      .upload(uploadPath, buffer, {
+        contentType: file.type,
+        upsert: true
+      });
 
-    await writeFile(filepath, buffer);
+    if (error) {
+      console.error('Supabase upload error:', error);
+      return NextResponse.json({ error: 'Error uploading file' }, { status: 500 });
+    }
 
-    return NextResponse.json({ url: `${urlPrefix}/${filename}` });
+    const { data: { publicUrl } } = supabase
+      .storage
+      .from('uploads')
+      .getPublicUrl(uploadPath);
+
+    return NextResponse.json({ url: publicUrl });
   } catch (error) {
     console.error('Error uploading file:', error);
     return NextResponse.json({ error: 'Error uploading file' }, { status: 500 });

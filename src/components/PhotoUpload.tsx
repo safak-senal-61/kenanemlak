@@ -76,8 +76,17 @@ export default function PhotoUpload({ propertyId, onUploadComplete, existingPhot
       file.type.startsWith('image/')
     );
     
-    if (files.length > 0) {
-      uploadFiles(files);
+    // Check file size (5MB)
+    const validFiles = files.filter(file => {
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`${file.name} 5MB'dan büyük!`);
+        return false;
+      }
+      return true;
+    });
+
+    if (validFiles.length > 0) {
+      uploadFiles(validFiles);
     }
   }, [uploadFiles]);
 
@@ -86,8 +95,17 @@ export default function PhotoUpload({ propertyId, onUploadComplete, existingPhot
       file.type.startsWith('image/')
     );
     
-    if (files.length > 0) {
-      uploadFiles(files);
+    // Check file size (5MB)
+    const validFiles = files.filter(file => {
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`${file.name} 5MB'dan büyük!`);
+        return false;
+      }
+      return true;
+    });
+
+    if (validFiles.length > 0) {
+      uploadFiles(validFiles);
     }
   }, [uploadFiles]);
 
