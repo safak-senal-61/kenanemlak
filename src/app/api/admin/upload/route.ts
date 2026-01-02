@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
-import { supabaseAdmin as supabase } from '@/lib/supabase';
+import s3Client from '@/lib/s3';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { verifyToken } from '@/lib/jwt';
 import { prisma } from '@/lib/prisma'
 
@@ -12,23 +13,24 @@ async function saveUploadedFile(buffer: Buffer, originalName: string, propertyId
   const ext = rawExt.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() || 'bin';
   
   const fileName = `${propertyId}/${randomUUID()}.${ext}`;
+  const bucketName = process.env.DO_SPACES_BUCKET;
 
-  const { error } = await supabase
-    .storage
-    .from('properties')
-    .upload(fileName, buffer, {
-      contentType: `image/${ext}`,
-      upsert: true
-    });
-
-  if (error) {
-    throw error;
+  if (!bucketName) {
+    throw new Error('DO_SPACES_BUCKET env variable is not set');
   }
 
-  const { data: { publicUrl } } = supabase
-    .storage
-    .from('properties')
-    .getPublicUrl(fileName);
+  const command = new PutObjectCommand({
+    Bucket: bucketName,
+    Key: fileName,
+    Body: buffer,
+    ACL: 'public-read',
+    ContentType: `image/${ext}`,
+  });
+
+  await s3Client.send(command);
+
+  const region = process.env.DO_SPACES_REGION || 'fra1';
+  const publicUrl = `https://${bucketName}.${region}.digitaloceanspaces.com/${fileName}`;
 
   return publicUrl;
 }

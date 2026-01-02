@@ -1,6 +1,7 @@
 
 import { NextResponse } from 'next/server';
-import { supabaseAdmin as supabase } from '@/lib/supabase';
+import s3Client from '@/lib/s3';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
 
 export async function POST(request: Request) {
   try {
@@ -52,23 +53,24 @@ export async function POST(request: Request) {
       uploadPath = `${safeFolder}/${filename}`;
     }
 
-    const { error } = await supabase
-      .storage
-      .from('uploads')
-      .upload(uploadPath, buffer, {
-        contentType: file.type,
-        upsert: true
-      });
-
-    if (error) {
-      console.error('Supabase upload error:', error);
-      return NextResponse.json({ error: 'Error uploading file' }, { status: 500 });
+    const bucketName = process.env.DO_SPACES_BUCKET;
+    if (!bucketName) {
+      throw new Error('DO_SPACES_BUCKET env variable is not set');
     }
 
-    const { data: { publicUrl } } = supabase
-      .storage
-      .from('uploads')
-      .getPublicUrl(uploadPath);
+    // Upload to DigitalOcean Spaces
+    const command = new PutObjectCommand({
+      Bucket: bucketName,
+      Key: uploadPath,
+      Body: buffer,
+      ACL: 'public-read',
+      ContentType: file.type,
+    });
+
+    await s3Client.send(command);
+
+    const region = process.env.DO_SPACES_REGION || 'fra1';
+    const publicUrl = `https://${bucketName}.${region}.digitaloceanspaces.com/${uploadPath}`;
 
     return NextResponse.json({ url: publicUrl });
   } catch (error) {
