@@ -6,6 +6,7 @@ import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { MapPin, Home, Bath, Square, ArrowLeft, Phone, Calendar, Check, Share2, Heart, Maximize2, X, ChevronLeft, ChevronRight, Edit } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import PageTitle from '@/components/PageTitle';
 import { Property } from '@/types/property';
 import AppointmentModal from '@/components/AppointmentModal';
 import { fetchWithCache } from '@/utils/apiCache';
@@ -110,6 +111,7 @@ export default function PropertyDetails() {
 
   return (
     <div className="min-h-screen bg-[#f5f5f7] pb-20">
+       <PageTitle title={property.title} />
        {/* Glassy Header */}
        <motion.div 
          initial={{ y: -100 }}

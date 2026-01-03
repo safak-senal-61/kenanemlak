@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
+import BrandLogo from './BrandLogo'
 import { Facebook, Twitter, Instagram } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
@@ -18,19 +18,7 @@ export default function Footer() {
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="rounded-lg overflow-hidden">
-                <Image
-                  src="/logo.png"
-                  alt="Kenan Kadıoğlu"
-                  width={150}
-                  height={60}
-                  className="h-8 w-auto object-contain rounded-lg"
-                />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold">{tHero('mainTitle1')}</h3>
-                <p className="text-gray-400 text-sm">{tHero('mainTitle2')}</p>
-              </div>
+              <BrandLogo />
             </div>
             <p className="text-gray-300 leading-relaxed">
               {tHero('description')}

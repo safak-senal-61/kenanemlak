@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { Link } from '@/i18n/routing'
-import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Phone, Mail, MapPin, Home, Building, User, MessageCircle, Bell, Users } from 'lucide-react'
-import Logo from '@/components/Logo'
+import BrandLogo from '@/components/BrandLogo'
 import SubscriptionModal from './SubscriptionModal'
 import { useTranslations } from 'next-intl'
 import LanguageSwitcher from './LanguageSwitcher'
@@ -110,7 +109,7 @@ export default function Header() {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-4 group">
-              <Logo />
+              <BrandLogo animated={true} />
             </Link>
 
             {/* Desktop Navigation */}
@@ -198,15 +197,7 @@ export default function Header() {
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-primary-gold/20 bg-white">
                   <div className="flex items-center space-x-3">
-                    <div className="rounded-lg overflow-hidden">
-                      <Image
-                        src="/logo.png"
-                        alt="Kenan Kadıoğlu"
-                        width={120}
-                        height={40}
-                        className="h-8 w-auto object-contain rounded-lg"
-                      />
-                    </div>
+                    <BrandLogo lightMode={true} />
                   </div>
                   <motion.button
                     onClick={() => setMobileMenuOpen(false)}

@@ -2,7 +2,8 @@
 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import Image from 'next/image'
+import BrandLogo from '@/components/BrandLogo'
+import PageTitle from '@/components/PageTitle'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { Phone, Mail, MapPin, Clock, Send, User, MessageSquare, Facebook, Instagram, Twitter } from 'lucide-react'
@@ -59,6 +60,7 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <PageTitle title={t('title')} />
       <Header />
       
       {/* Hero Section */}
@@ -144,14 +146,8 @@ export default function ContactPage() {
               {/* Social Media & Logo */}
               <div className="mt-8 bg-gray-50 p-8 rounded-2xl border border-gray-100 text-center">
                 <div className="mb-6 flex justify-center">
-                  <div className="inline-block rounded-xl overflow-hidden">
-                    <Image
-                      src="/logo.png"
-                      alt="Kenan Kadıoğlu"
-                      width={300}
-                      height={100}
-                      className="h-16 w-auto object-contain rounded-xl"
-                    />
+                  <div className="inline-block rounded-xl overflow-hidden p-2">
+                    <BrandLogo lightMode={true} animated={true} src="/logo.png" imageSize={120} className="scale-110" />
                   </div>
                 </div>
 

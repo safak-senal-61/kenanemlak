@@ -4,6 +4,7 @@ import Header from '@/components/Header'
 import HeroSection from '@/components/HeroSection'
 import PropertyCard from '@/components/PropertyCard'
 import Footer from '@/components/Footer'
+import PageTitle from '@/components/PageTitle'
 import { motion } from 'framer-motion'
 import { Building, Users, Award, TrendingUp } from 'lucide-react'
 import { useState, useEffect } from 'react'
@@ -30,6 +31,7 @@ interface Property {
 
 export default function Home() {
   const t = useTranslations('HomePage')
+  const tNav = useTranslations('Navigation')
   const [featuredProperties, setFeaturedProperties] = useState<Property[]>([])
   const [stats, setStats] = useState([
     { icon: Building, label: 'activeListings', value: '0' },
@@ -70,6 +72,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <PageTitle title={tNav('home')} />
       <Header />
       <HeroSection />
       

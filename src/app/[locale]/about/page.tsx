@@ -2,6 +2,7 @@
 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import PageTitle from '@/components/PageTitle'
 import { motion } from 'framer-motion'
 import { Shield, Users, TrendingUp, Award, Phone, Mail, MapPin } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -44,6 +45,7 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <PageTitle title={t('title')} />
       <Header />
       
       {/* Hero Section */}

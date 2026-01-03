@@ -7,6 +7,7 @@ import { Filter, SlidersHorizontal } from 'lucide-react'
 import PropertyCard from '@/components/PropertyCard'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import PageTitle from '@/components/PageTitle'
 import PropertyFilters from '@/components/PropertyFilters'
 import { useTranslations } from 'next-intl'
 import { Property, PropertyFilters as IPropertyFilters } from '@/types/property'
@@ -120,6 +121,7 @@ function PropertiesContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <PageTitle title={t('title')} />
       <Header />
       
       {/* Hero Section - Smaller */}

@@ -24,6 +24,11 @@ export const metadata: Metadata = {
   title: "Kenan Kadıoğlu Gayrimenkul - Trabzon'un Güvenilir Emlak Danışmanı",
   description: "15 yıllık sektör tecrübesiyle Trabzon ve çevresinde güvenilir, şeffaf ve profesyonel gayrimenkul danışmanlık hizmetleri.",
   keywords: "Trabzon emlak, Trabzon gayrimenkul, Kenan Kadıoğlu, emlak danışmanlığı, satılık daire Trabzon, kiralık daire Trabzon",
+  icons: {
+    icon: '/kenankadioglu.svg',
+    shortcut: '/kenankadioglu.svg',
+    apple: '/kenankadioglu.svg',
+  }
 };
 
 export default function RootLayout({
